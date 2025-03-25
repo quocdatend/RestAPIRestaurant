@@ -1,4 +1,5 @@
 <?php
+require_once '../api/objects/user.php';
 class UserController {
     private $db;
     private $user;
@@ -10,24 +11,30 @@ class UserController {
 
     // get all
     public function getUsers() {
-        $stmt = $this->user->readAll();
+        $stmt = $this->user->readAll(PDO::FETCH_ASSOC);
         $users_arr = array();
+        $result = $stmt->get_result(); // Lấy kết quả từ câu truy vấn
 
-        while ($row = $stmt->fetch()) {
-            extract($row);
+        $users = [];
+        while ($row = $result->fetch_assoc()) { // Lặp từng hàng dữ liệu
+            $users[] = $row;
+        }
+        foreach ($users as $row) {
             $user_item = array(
-                "id" => $id,
-                "username" => $username,
-                "password" => $password,
-                "email" => $email,
-                "phone" => $phone,
+                "id" => $row['id'],
+                "username" => $row['username'],
+                "password" => $row['password'],
+                "email" => $row['email'],
+                "phone" => $row['phone'],
             );
             array_push($users_arr, $user_item);
         }
-
+    
         http_response_code(200);
         echo json_encode($users_arr);
     }
+    
+    
 
     // create
     public function createUser($data) {

@@ -51,6 +51,13 @@ class User {
         return (int)$row['total'];
     }
 
+    // public function read() {
+    //     $query = "SELECT * FROM " . $this->table_name;
+    //     $stmt = $this->conn->prepare($query);
+    //     $stmt->execute();
+    //     return $stmt;
+    // }
+
     public function readOne() {
         $query = "SELECT * FROM " . $this->table_name . " WHERE id = ?";
         $stmt = $this->conn->prepare($query);
