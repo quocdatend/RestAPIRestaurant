@@ -1,13 +1,3 @@
-api/
-├── config/           # Configuration files
-├── controllers/      # Request handlers
-├── models/           # Data models
-├── middleware/       # Request middleware
-├── routes/           # Route definitions
-├── services/         # Business logic
-├── utils/            # Helper functions
-└── index.php         # Entry point
-
 Request 
 → index.php 
 → Router 
