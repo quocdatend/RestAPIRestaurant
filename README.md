@@ -7,7 +7,7 @@ Request
 → Database 
 → Response 
 → Client
-
+```
 project-restapi/
 │
 ├── config/
@@ -50,3 +50,4 @@ project-restapi/
 ├── .htaccess                  # Cấu hình Apache Rewrite
 ├── composer.json              # Quản lý dependencies
 └── README.md                  # Hướng dẫn sử dụng
+```
