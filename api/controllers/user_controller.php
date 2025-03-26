@@ -38,19 +38,15 @@ class UserController {
 
     // create
     public function createUser($data) {
-        $this->user->id = $this->generateRandomId();
-        $this->user->username = $data->username;
-        $this->user->password = $this->hashPassword($data->password);
-        $this->user->email = $data->email;
-        $this->user->phone = $data->phone;
 
-        if ($this->user->create()) {
+        if ($this->user->create($data)) {
             http_response_code(201);
             echo json_encode(array("message" => "Người dùng được tạo thành công."));
         } else {
             http_response_code(503);
             echo json_encode(array("message" => "Không thể tạo tài khoản."));
         }
+        return ["message" => "User created successfully"];
     }
 
     // get by username
@@ -64,16 +60,7 @@ class UserController {
             http_response_code(404);
             echo json_encode(array("message" => "Không tìm thấy người dùng."));
         }
-    }
-
-    // hass pass
-    private function hashPassword($password) {
-        return hash('sha256', $password); // Tạo hash 64 ký tự
-    }
-
-    // random id
-    private function generateRandomId() {
-        return bin2hex(random_bytes(8)); // 8 bytes = 16 ký tự hex
+        return ["Users" => $result];
     }
 }
 ?>

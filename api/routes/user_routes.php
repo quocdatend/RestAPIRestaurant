@@ -16,7 +16,7 @@ $id = isset($uri_segments[2]) ? intval($uri_segments[2]) : null;
 switch ($method) {
     case 'GET':
         if ($id) {
-            // echo json_encode($user_controller->getUserById($id)); // Lấy user theo ID
+            echo json_encode($user_controller->getUserByUsername($id)); // Lấy user theo ID
         } else {
             $user_controller->getUsers(); // Lấy danh sách users
         }
@@ -24,7 +24,7 @@ switch ($method) {
 
     case 'POST':
         $data = json_decode(file_get_contents("php://input"), true);
-        // echo json_encode($user_controller->createUser($data)); // Tạo user mới
+        echo json_encode($user_controller->createUser($data)); // Tạo user mới
         break;
 
     case 'PUT':

@@ -7,7 +7,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 // Nhận URI request
 $request_uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-$resource = isset($request_uri[0]) ? $request_uri[0] : null;
+$resource = isset($request_uri[1]) ? $request_uri[1] : null; //RestAPIRestaurant
 
 // Điều hướng đến file routes tương ứng
 switch ($resource) {
