@@ -24,7 +24,7 @@ switch ($method) {
 
     case 'POST':
         $data = json_decode(file_get_contents("php://input"), true);
-        // echo json_encode($user_controller->createUser($data)); // Tạo user mới
+        echo json_encode($user_controller->createUser($data)); // Tạo user mới
         break;
 
     case 'PUT':

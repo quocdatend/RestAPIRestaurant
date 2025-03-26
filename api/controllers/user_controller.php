@@ -51,6 +51,7 @@ class UserController {
             http_response_code(503);
             echo json_encode(array("message" => "Không thể tạo tài khoản."));
         }
+        return ["message" => "User created successfully", "user" => $data];
     }
 
     // get by username
