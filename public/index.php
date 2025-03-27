@@ -18,7 +18,7 @@ switch ($resource) {
         require_once '../api/routes/order_route.php';
         break;
     default:
-        echo json_encode(["message" => "Invalid API endpoint"]);
+        echo json_encode(["message" => $resource]);
         break;
 }
 ?>

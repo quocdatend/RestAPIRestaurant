@@ -3,7 +3,8 @@ $config = [
     'db_host' => 'localhost',
     'db_user' => 'root',
     'db_pass' => '',
-    'db_name' => 'restaurent',
+    'db_name' => 'restaurant',
+    // 'jwt_secret' => 'your_secure_jwt_secret_key'
 ];
 
 class Database {
