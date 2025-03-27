@@ -8,7 +8,6 @@ class User
     private $username;
     private $password;
     private $email;
-    private $phone;
 
     public function __construct($db)
     {
@@ -28,7 +27,7 @@ class User
     {
         $offset = ($page - 1) * $limit;
 
-        $query = "SELECT id, username, password, email, phone FROM {$this->table_name} ORDER BY id DESC LIMIT ?, ?";
+        $query = "SELECT id, username, password, email FROM {$this->table_name} ORDER BY id DESC LIMIT ?, ?";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param('ii', $offset, $limit);
@@ -71,8 +70,8 @@ class User
 
     public function create($data) {
         $query = "INSERT INTO " . $this->table_name . " 
-                  (id, username, password, email, phone) 
-                  VALUES (?, ?, ?, ?, ?)";
+                  (id, username, password, email) 
+                  VALUES (?, ?, ?, ?)";
     
         $stmt = $this->conn->prepare($query);
     
@@ -80,18 +79,16 @@ class User
         $username = isset($data['username']) ? $data['username'] : '';
         $password = isset($data['password']) ? $data['password'] : '';
         $email = isset($data['email']) ? $data['email'] : '';
-        $phone = isset($data['phone']) ? $data['phone'] : '';
     
         // Clean data
         $this->username = htmlspecialchars(strip_tags($username));
         $this->password = htmlspecialchars(strip_tags($password));
         $this->email = htmlspecialchars(strip_tags($email));
-        $this->phone = htmlspecialchars(strip_tags($phone));
     
         $id = $this->generateRandomAlphaNumeric();
         $hashedPassword = $this->hashPassword($this->password);
 
-        $stmt->bind_param("sssss", $id, $this->username, $hashedPassword, $this->email, $this->phone);
+        $stmt->bind_param("sssss", $id, $this->username, $hashedPassword, $this->email);
         
         return $stmt->execute() ? true : false;
     }
@@ -102,7 +99,6 @@ class User
                   SET username = :username, 
                       password = :password, 
                       email = :email, 
-                      phone = :phone
                   WHERE id = :id";
 
         $stmt = $this->conn->prepare($query);
@@ -111,14 +107,12 @@ class User
         $this->username = htmlspecialchars(strip_tags($this->username));
         $this->password = htmlspecialchars(strip_tags($this->password));
         $this->email = htmlspecialchars(strip_tags($this->email));
-        $this->phone = htmlspecialchars(strip_tags($this->phone));
         $this->id = htmlspecialchars(strip_tags($this->id));
 
         // Bind các giá trị
         $stmt->bindParam(":username", $this->username);
         $stmt->bindParam(":password", $this->password);
         $stmt->bindParam(":email", $this->email);
-        $stmt->bindParam(":phone", $this->phone);
         $stmt->bindParam(':id', $this->id);
 
         return $stmt->execute() ? true : false;
@@ -152,27 +146,31 @@ class User
     }
 
 
-    public function searchByUsername($keywords)
+    public function searchByUsername($data)
     {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE username LIKE ?";
+        $query = "SELECT * FROM " . $this->table_name . " WHERE username = ?";
 
         $stmt = $this->conn->prepare($query);
 
-        $keywords = "%{$keywords}%";
-        $stmt->bindParam(1, $keywords);
+        $username = isset($data) ? $data : '';
+        $this->username = htmlspecialchars(strip_tags($username));
+        // $keywords = "%{$keywords}%";
+        $stmt->bind_param(1, $this->username);
 
         $stmt->execute();
         return $stmt;
     }
 
-    public function searchByEmail($keywords)
+    public function searchByEmail($data)
     {
         $query = "SELECT * FROM " . $this->table_name . " WHERE email LIKE ?";
 
         $stmt = $this->conn->prepare($query);
+        
+        $email = isset($data) ? $data : '';
+        $this->email = htmlspecialchars(strip_tags($email));
 
-        $keywords = "%{$keywords}%";
-        $stmt->bindParam(1, $keywords);
+        $stmt->bind_param(1, $this->email);
 
         $stmt->execute();
         return $stmt;

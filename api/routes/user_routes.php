@@ -11,14 +11,15 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri_segments = explode('/', trim($uri, '/'));
 
 // Lấy ID từ URL nếu có (ví dụ: /users/1)
-$id = isset($uri_segments[2]) ? intval($uri_segments[2]) : null;
+$id = isset($uri_segments[2]) ? $uri_segments[2] : null;
 
 switch ($method) {
     case 'GET':
-        if ($id) {
-            echo json_encode($user_controller->getUserByUsername($id)); // Lấy user theo ID
+        if (isset($id)) {
+            $user_controller->getUserByUsername($id); // Lấy user theo ID
         } else {
             $user_controller->getUsers(); // Lấy danh sách users
+            echo json_encode($uri_segments[2]);
         }
         break;
 

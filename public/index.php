@@ -16,7 +16,7 @@ switch ($resource) {
         break;
 
     default:
-        echo json_encode(["message" => "Invalid API endpoint"]);
+        echo json_encode(["message" => $resource]);
         break;
 }
 ?>
