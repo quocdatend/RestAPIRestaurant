@@ -7,16 +7,18 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 // Nhận URI request
 $request_uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-$resource = isset($request_uri[1]) ? $request_uri[1] : null; //RestAPIRestaurant
+$resource = isset($request_uri[1]) ? $request_uri[1] : null;
 
 // Điều hướng đến file routes tương ứng
 switch ($resource) {
     case 'users':
         require_once '../api/routes/user_routes.php';
         break;
-
+    case'order':
+        require_once '../api/routes/order_route.php';
+        break;
     default:
-        echo json_encode(["message" => "Invalid API endpoint"]);
+        echo json_encode(["message" => $resource]);
         break;
 }
 ?>
