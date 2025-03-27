@@ -39,16 +39,6 @@ class OrderItem {
         $stmt->execute();
         return $stmt;
     }
-
-    // Update an order item
-    public function update() {
-        $query = "UPDATE " . $this->table_name . " SET status = :status WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":id", $this->id);
-        $stmt->bindParam(":status", $this->status);
-        return $stmt->execute();
-    }
-
     // Delete an order item
     public function delete() {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = :id";
@@ -56,6 +46,49 @@ class OrderItem {
         $stmt->bindParam(":id", $this->id);
         return $stmt->execute();
     }  
+    public function deleteByOrderId($orderId) {
+        $query = "DELETE FROM order_items WHERE order_id = ?";
+        $stmt = $this->conn->prepare($query);
+        if ($stmt === false) {
+            error_log("Prepare failed: " . $this->conn->error);
+            return false;
+        }
+        $stmt->bind_param("i", $orderId);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
+    public function update() {
+        $query = "UPDATE order_items 
+                  SET menu_item_id = ?, status = ? 
+                  WHERE id = ? AND order_id = ?";
+        $stmt = $this->conn->prepare($query);
+        if ($stmt === false) {
+            error_log("Prepare failed: " . $this->conn->error);
+            return false;
+        }
+    
+        $stmt->bind_param("isii", $this->menuItemId, $this->status, $this->id, $this->orderId);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
+    public function deleteByOrderItemId($orderItemId) {
+        $query = "DELETE FROM order_items WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        
+        if ($stmt === false) {
+            error_log("Prepare failed: " . $this->conn->error);
+            return false;
+        }
+    
+        $stmt->bind_param("i", $orderItemId);
+        $result = $stmt->execute();
+        $stmt->close();
+        
+        return $result;
+    }
+    
 }
 
 ?>

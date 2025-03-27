@@ -69,46 +69,36 @@ class Orders
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function update()
-    {
-        $query = "UPDATE " . $this->table_name . " SET user_id = ?, total_price = ?, num_people = ?, 
-                  special_request = ?, customer_name = ?, order_date = ?, order_time = ?
-                  WHERE order_id = ?";
-
+    public function update() {
+        $query = "UPDATE " . $this->table_name . " 
+                  SET user_id = ?, total_price = ?, num_people = ?, special_request = ?, customer_name = ?
+                  WHERE id = ?";
         $stmt = $this->conn->prepare($query);
         if ($stmt === false) {
-            throw new Exception("Prepare failed: " . $this->conn->error);
+            error_log("Prepare failed: " . $this->conn->error);
+            return false;
         }
-
-        $stmt->bind_param(
-            "idissssi",
-            $this->userId,
-            $this->totalPrice,
-            $this->numPeople,
-            $this->specialRequest,
-            $this->customerName,
-            $this->orderDate,
-            $this->orderTime,
-            $this->orderId
-        );
-
+        $stmt->bind_param("idissi", $this->userId, $this->totalPrice, $this->numPeople, $this->specialRequest, $this->customerName, $this->orderId);
         $result = $stmt->execute();
-        if ($result === false) {
-            throw new Exception("Execute failed: " . $stmt->error);
-        }
-
         $stmt->close();
         return $result;
     }
-    // Delete an order
+    
     public function delete()
     {
-        $query = "DELETE FROM " . $this->table_name . " WHERE order_id = :orderId";
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":orderId", $this->orderId);
-        return $stmt->execute();
+        if ($stmt === false) {
+            error_log("Prepare failed: " . $this->conn->error); 
+            return false;
+        }
+        $this->orderId = (int) $this->orderId; 
+        $stmt->bind_param("i", $this->orderId); 
+        $result = $stmt->execute();
+        $stmt->close(); 
+        return $result;
     }
-    // Read all orders with user details
+    
     public function readAll()
     {
         $query = "SELECT o.id, o.user_id, u.username, u.email, o.total_price, o.num_people, 

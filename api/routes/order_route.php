@@ -30,25 +30,33 @@ switch ($method) {
         break;
 
     case 'PUT':
-        $data = json_decode(file_get_contents("php://input"), true);
-        $orderId = isset($data['order_id']) ? (int) $data['order_id'] : null;
-
-        if ($orderId) {
-            $orderController->updateOrder($orderId, $data);
+        if ($id) {
+            $data = json_decode(file_get_contents("php://input"), true);
+            if (!is_array($data)) {
+                http_response_code(400);
+                echo json_encode(["message" => "Dữ liệu đầu vào không hợp lệ"]);
+                break;
+            }
+            $orderController->updateOrder($id, $data);
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Thiếu order_id"]);
+            echo json_encode(["message" => "Thiếu order_id trong URL"]);
         }
         break;
-
     case 'DELETE':
-        if ($id) {
-            $orderController->deleteOrder((object)["id" => $id]); // Xóa đơn hàng
+        if (isset($uri_segments[1]) && $uri_segments[1] === 'order' && isset($uri_segments[2])) {
+            if ($uri_segments[2] === 'item' && isset($uri_segments[3])) {
+                $orderItemId = intval($uri_segments[3]);
+                $orderController->deleteOrderItem($orderItemId);
+            } else {
+                $orderId = intval($uri_segments[2]);
+                $orderController->deleteOrder((object)["orderId" => $orderId]);
+            }
         } else {
-            echo json_encode(["message" => "Order ID required"]);
+            http_response_code(400); // Bad Request
+            echo json_encode(["message" => "Order ID or Item ID required"]);
         }
         break;
-
     default:
         echo json_encode(["message" => "Invalid request method"]);
         break;
