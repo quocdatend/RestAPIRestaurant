@@ -2,7 +2,7 @@
 $config = [
     'db_host' => 'localhost:3306',
     'db_user' => 'root',
-    'db_pass' => 'Quocdat2112@',
+    'db_pass' => '',
     'db_name' => 'restaurant',
     // 'jwt_secret' => 'your_secure_jwt_secret_key'
 ];
