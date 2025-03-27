@@ -13,15 +13,25 @@ class OrderItem {
         $this->conn = $db;
     }
 
+    
     public function create() {
-        $query = "INSERT INTO " . $this->table_name . " (order_id, menu_item_id, status) VALUES (:orderId, :menuItemId, :status)";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":orderId", $this->orderId);
-        $stmt->bindParam(":menuItemId", $this->menuItemId);
-        $stmt->bindParam(":status", $this->status);
-        return $stmt->execute();
+    $query = "INSERT INTO " . $this->table_name . " (order_id, menu_item_id, status) VALUES (?, ?, ?)";
+    $stmt = $this->conn->prepare($query);
+    
+    if ($stmt === false) {
+        throw new Exception("Prepare failed: " . $this->conn->error);
     }
-
+    
+    $stmt->bind_param("iis", $this->orderId, $this->menuItemId, $this->status);
+    $result = $stmt->execute();
+    
+    if ($result === false) {
+        throw new Exception("Execute failed: " . $stmt->error);
+    }
+    
+    $stmt->close();
+    return $result;
+}
     // Read all order items
     public function read() {
         $query = "SELECT * FROM " . $this->table_name;

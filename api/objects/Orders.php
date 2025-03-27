@@ -21,20 +21,33 @@ class Orders
     }
     public function create()
     {
-        $query = "INSERT INTO " . $this->table_name . " (user_id, items, total_price, num_people, special_request, customer_name, order_date, order_time) 
-                  VALUES (:userId, :items, :totalPrice, :numPeople, :specialRequest, :customerName, :orderDate, :orderTime)";
+        // Không lưu cột items vào bảng orders, chỉ lưu các cột khác
+        $query = "INSERT INTO " . $this->table_name . " (user_id, total_price, num_people, special_request, customer_name, order_date, order_time) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":userId", $this->userId);
-        $stmt->bindParam(":items", json_encode($this->items));
-        $stmt->bindParam(":totalPrice", $this->totalPrice);
-        $stmt->bindParam(":numPeople", $this->numPeople);
-        $stmt->bindParam(":specialRequest", $this->specialRequest);
-        $stmt->bindParam(":customerName", $this->customerName);
-        $stmt->bindParam(":orderDate", $this->orderDate);
-        $stmt->bindParam(":orderTime", $this->orderTime);
+        if ($stmt === false) {
+            throw new Exception("Prepare failed: " . $this->conn->error);
+        }
 
-        return $stmt->execute();
+        $stmt->bind_param(
+            "idissss",
+            $this->userId,
+            $this->totalPrice,
+            $this->numPeople,
+            $this->specialRequest,
+            $this->customerName,
+            $this->orderDate,
+            $this->orderTime
+        );
+
+        $result = $stmt->execute();
+        if ($result === false) {
+            throw new Exception("Execute failed: " . $stmt->error);
+        }
+
+        $stmt->close();
+        return $result;
     }
 
     // Read all orders
@@ -56,27 +69,37 @@ class Orders
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Update an order
     public function update()
     {
-        $query = "UPDATE " . $this->table_name . " SET user_id = :userId, items = :items, total_price = :totalPrice, num_people = :numPeople, 
-                  special_request = :specialRequest, customer_name = :customerName, order_date = :orderDate, order_time = :orderTime
-                  WHERE order_id = :orderId";
+        $query = "UPDATE " . $this->table_name . " SET user_id = ?, total_price = ?, num_people = ?, 
+                  special_request = ?, customer_name = ?, order_date = ?, order_time = ?
+                  WHERE order_id = ?";
 
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":orderId", $this->orderId);
-        $stmt->bindParam(":userId", $this->userId);
-        $stmt->bindParam(":items", json_encode($this->items));
-        $stmt->bindParam(":totalPrice", $this->totalPrice);
-        $stmt->bindParam(":numPeople", $this->numPeople);
-        $stmt->bindParam(":specialRequest", $this->specialRequest);
-        $stmt->bindParam(":customerName", $this->customerName);
-        $stmt->bindParam(":orderDate", $this->orderDate);
-        $stmt->bindParam(":orderTime", $this->orderTime);
+        if ($stmt === false) {
+            throw new Exception("Prepare failed: " . $this->conn->error);
+        }
 
-        return $stmt->execute();
+        $stmt->bind_param(
+            "idissssi",
+            $this->userId,
+            $this->totalPrice,
+            $this->numPeople,
+            $this->specialRequest,
+            $this->customerName,
+            $this->orderDate,
+            $this->orderTime,
+            $this->orderId
+        );
+
+        $result = $stmt->execute();
+        if ($result === false) {
+            throw new Exception("Execute failed: " . $stmt->error);
+        }
+
+        $stmt->close();
+        return $result;
     }
-
     // Delete an order
     public function delete()
     {

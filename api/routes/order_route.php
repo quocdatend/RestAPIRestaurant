@@ -30,12 +30,14 @@ switch ($method) {
         break;
 
     case 'PUT':
-        if ($id) {
-            $data = json_decode(file_get_contents("php://input"), true);
-            $orderController->updateOrder($id,$data);
-            
+        $data = json_decode(file_get_contents("php://input"), true);
+        $orderId = isset($data['order_id']) ? (int) $data['order_id'] : null;
+
+        if ($orderId) {
+            $orderController->updateOrder($orderId, $data);
         } else {
-            echo json_encode(["message" => "Order ID required"]);
+            http_response_code(400);
+            echo json_encode(["message" => "Thiếu order_id"]);
         }
         break;
 
