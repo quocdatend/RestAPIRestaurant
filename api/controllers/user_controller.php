@@ -1,6 +1,7 @@
 <?php
 require_once '../api/objects/user.php';
 require_once '../utils/validator.php';
+require_once '../utils/response.php';
 class UserController
 {
     private $db;
@@ -53,15 +54,15 @@ class UserController
         }
 
         // check exits username
-        $stmt = $this->getUserByUsername($data['username']);
-        if ($stmt) {
+        $stmt = $this->user->searchByUsername($data);
+        if (count($stmt) != 0) {
             APIResponse::error("Username đã tồn tại.");
             return ["message" => "User created faild"];
         }
 
         // check exits email
-        $stmt = $this->getUserByEmail($data['email']);
-        if ($stmt) {
+        $stmt = $this->user->searchByEmail($data);
+        if (count($stmt) != 0) {
             APIResponse::error("Email đã tồn tại.");
             return ["message" => "User created faild"];
         }
@@ -77,34 +78,21 @@ class UserController
         return ["message" => "User created successfully"];
     }
 
-    // get by username
-    public function getUserByUsername($data)
+    public function login($data)
     {
-        $result = $this->user->searchByUsername($data);
-
-        if ($result) {
-            http_response_code(200);
-            //echo json_encode($result);
-            return ["Users" => $result];
-        } else {
-            http_response_code(404);
-            //echo json_encode(array("message" => "Không tìm thấy người dùng."));
-            return ["message" => "Không tìm thấy người dùng."];
-        }
-    }
-
-    // get by email
-    public function getUserByEmail($data)
-    {
-        $result = $this->user->searchByEmail($data);
-        if ($result) {
-            http_response_code(200);
-            //echo json_encode($result);
-            return ["Users" => $result];
-        } else {
-            http_response_code(404);
-            //echo json_encode(array("message" => "Không tìm thấy người dùng."));
-            return ["message" => "Không tìm thấy người dùng."];
-        }
+        // if (!Validator::validateUsername($data['username'])) {
+        //     APIResponse::error("Username phải có ít nhất 8 ký tự, chứa chữ hoa,
+        //     chữ thường, số và ký tự đặc biệt.");
+        //     return ["message" => "User created faild"];
+        // }
+        // if (!Validator::validateEmail($data['email'])) {
+        //     APIResponse::error("Email không hợp lệ.");
+        //     return ["message" => "User created faild"];
+        // }
+        // // check exits username
+        // $stmt = $this->user->searchByUsername($data);
+        // if (count($stmt) != 0) {
+        //     APIResponse::error("Username đã tồn tại.");
+        // }
     }
 }

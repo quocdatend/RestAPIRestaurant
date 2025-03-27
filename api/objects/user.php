@@ -88,7 +88,7 @@ class User
         $id = $this->generateRandomAlphaNumeric();
         $hashedPassword = $this->hashPassword($this->password);
 
-        $stmt->bind_param("sssss", $id, $this->username, $hashedPassword, $this->email);
+        $stmt->bind_param("ssss", $id, $this->username, $hashedPassword, $this->email);
         
         return $stmt->execute() ? true : false;
     }
@@ -152,28 +152,44 @@ class User
 
         $stmt = $this->conn->prepare($query);
 
-        $username = isset($data) ? $data : '';
+        $username = isset($data['username']) ? $data['username'] : '';
         $this->username = htmlspecialchars(strip_tags($username));
         // $keywords = "%{$keywords}%";
-        $stmt->bind_param(1, $this->username);
+        $stmt->bind_param("s", $this->username);
 
         $stmt->execute();
-        return $stmt;
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $result->free();
+        $stmt->close(); 
+
+        return $users; 
     }
 
     public function searchByEmail($data)
     {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE email LIKE ?";
+        $query = "SELECT * FROM " . $this->table_name . " WHERE email = ?";
 
         $stmt = $this->conn->prepare($query);
         
-        $email = isset($data) ? $data : '';
+        $email = isset($data['email']) ? $data['email'] : '';
         $this->email = htmlspecialchars(strip_tags($email));
 
-        $stmt->bind_param(1, $this->email);
+        $stmt->bind_param("s", $this->email);
 
         $stmt->execute();
-        return $stmt;
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $result->free();
+        $stmt->close(); 
+
+        return $users; 
     }
 
     // hass pass
