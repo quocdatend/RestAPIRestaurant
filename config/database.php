@@ -1,13 +1,11 @@
 <?php
 $config = [
-    'db_host' => 'localhost:3306',
+    'db_host' => 'localhost',
     'db_user' => 'root',
-    'db_pass' => 'Quocdat2112@',
-    'db_name' => 'restaurant',
-    // 'jwt_secret' => 'your_secure_jwt_secret_key'
+    'db_pass' => '',
+    'db_name' => 'restaurent',
 ];
 
-// Database connection class
 class Database {
     private $conn;
     
