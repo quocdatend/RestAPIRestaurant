@@ -94,35 +94,45 @@ class User
         return $stmt->execute() ? true : false;
     }
 
-    public function update($data)
+    public function updateEmail($data)
     {
         // Lấy dữ liệu từ $data
         $username = isset($data['username']) ? $data['username'] : '';
-        $password = isset($data['password']) ? $data['password'] : '';
         $email = isset($data['email']) ? $data['email'] : '';
 
         // Làm sạch dữ liệu
         $username = htmlspecialchars(strip_tags($username));
-        $password = htmlspecialchars(strip_tags($password));
         $email = htmlspecialchars(strip_tags($email));
-        if ($password = '') {
-            return false;
-        }
-        if ($email == '') {
-            $query = "UPDATE " . $this->table_name . " SET password = ? WHERE username = ?";
+        $query = "UPDATE " . $this->table_name . " SET email = ? WHERE username = ?";
+
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bind_param("ss", $email, $username);
+
+        // Thực thi truy vấn
+        if ($stmt->execute()) {
+            return $stmt->affected_rows > 0; // Trả về true nếu có dòng bị ảnh hưởng
         } else {
-            $query = "UPDATE " . $this->table_name . " SET password = ?, email = ? WHERE username = ?";
+            return false; // Trả về false nếu thất bại
         }
+    }
+
+    public function updatePassword($data)
+    {
+        // Lấy dữ liệu từ $data
+        $username = isset($data['username']) ? $data['username'] : '';
+        $password = isset($data['password']) ? $data['password'] : '';
+
+        // Làm sạch dữ liệu
+        $username = htmlspecialchars(strip_tags($username));
+        $password = htmlspecialchars(strip_tags($password));
+        $query = "UPDATE " . $this->table_name . " SET password = ? WHERE username = ?";
 
         $stmt = $this->conn->prepare($query);
 
         $hashedPassword = $this->hashPassword($password);
 
-        if ($email == '') {
-            $stmt->bind_param("ss", $hashedPassword, $username);
-        } else {
-            $stmt->bind_param("sss", $hashedPassword, $email, $username);
-        }
+        $stmt->bind_param("ss", $hashedPassword, $username);
 
         // Thực thi truy vấn
         if ($stmt->execute()) {

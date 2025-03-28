@@ -84,13 +84,11 @@ class UserController
         $stmt = $this->user->searchByUsername($data);
         if (count($stmt) != 0) {
             $stmt = $this->user->loginByUsername($data);
-            return APIResponse::success($stmt);
         } else {
             // check email
             $stmt = $this->user->searchByEmail($data);
             if (count($stmt) != 0) {
                 $stmt = $this->user->loginByEmail($data);
-                
             } else {
                 return APIResponse::error("Tài khoản không tồn tại.");
             }
@@ -108,8 +106,25 @@ class UserController
         if (count($stmt) == 0) {
             return APIResponse::error("Username không tồn tại.");
         }
+        //check email
+        $stmt = $this->user->searchByEmail($data);
+        if (count($stmt) != 0) {
+            return APIResponse::error("Email đã tồn tại.");
+        }
+        $stmt = $this->user->updateEmail($data);
+        if (!$stmt) {
+            return APIResponse::error("Không thể cập nhật thông tin người dùng.");
+        }
+        return APIResponse::success($stmt);
+    }
 
-        $stmt = $this->user->update($data);
+    public function forgetPassword($data)
+    {
+        $stmt = $this->user->searchByUsername($data);
+        if (count($stmt) == 0) {
+            return APIResponse::error("Username không tồn tại.");
+        }
+        $stmt = $this->user->updatePassword($data);
         if (!$stmt) {
             return APIResponse::error("Không thể cập nhật thông tin người dùng.");
         }

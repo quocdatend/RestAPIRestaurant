@@ -36,6 +36,9 @@ switch ($method) {
         if (isset($uri_segments[2]) && $uri_segments[2] == 'update') {
             $data = json_decode(file_get_contents("php://input"), true);
             $user_controller->updateUser($data); // Cập nhật user
+        } else if (isset($uri_segments[2]) && $uri_segments[2] == 'forgetPassword') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $user_controller->forgetPassword($data);
         } else {
             echo json_encode(["message" => "User ID required"]);
         }
