@@ -1,6 +1,7 @@
 <?php
 require_once '../api/objects/user.php';
 require_once '../utils/validator.php';
+require_once '../utils/response.php';
 class UserController
 {
     private $db;
@@ -53,15 +54,15 @@ class UserController
         }
 
         // check exits username
-        $stmt = $this->getUserByUsername($data['username']);
-        if ($stmt) {
+        $stmt = $this->user->searchByUsername($data);
+        if (count($stmt) != 0) {
             APIResponse::error("Username đã tồn tại.");
             return ["message" => "User created faild"];
         }
 
         // check exits email
-        $stmt = $this->getUserByEmail($data['email']);
-        if ($stmt) {
+        $stmt = $this->user->searchByEmail($data);
+        if (count($stmt) != 0) {
             APIResponse::error("Email đã tồn tại.");
             return ["message" => "User created faild"];
         }
@@ -77,34 +78,56 @@ class UserController
         return ["message" => "User created successfully"];
     }
 
-    // get by username
-    public function getUserByUsername($data)
+    public function login($data)
     {
-        $result = $this->user->searchByUsername($data);
-
-        if ($result) {
-            http_response_code(200);
-            //echo json_encode($result);
-            return ["Users" => $result];
+        // check username
+        $stmt = $this->user->searchByUsername($data);
+        if (count($stmt) != 0) {
+            $stmt = $this->user->loginByUsername($data);
         } else {
-            http_response_code(404);
-            //echo json_encode(array("message" => "Không tìm thấy người dùng."));
-            return ["message" => "Không tìm thấy người dùng."];
+            // check email
+            $stmt = $this->user->searchByEmail($data);
+            if (count($stmt) != 0) {
+                $stmt = $this->user->loginByEmail($data);
+            } else {
+                return APIResponse::error("Tài khoản không tồn tại.");
+            }
         }
+        if (count($stmt) == 0) {
+            return APIResponse::error("Password incorrect");
+        }
+        return APIResponse::success($stmt);
     }
 
-    // get by email
-    public function getUserByEmail($data)
+    public function updateUser($data)
     {
-        $result = $this->user->searchByEmail($data);
-        if ($result) {
-            http_response_code(200);
-            //echo json_encode($result);
-            return ["Users" => $result];
-        } else {
-            http_response_code(404);
-            //echo json_encode(array("message" => "Không tìm thấy người dùng."));
-            return ["message" => "Không tìm thấy người dùng."];
+        //check username 
+        $stmt = $this->user->searchByUsername($data);
+        if (count($stmt) == 0) {
+            return APIResponse::error("Username không tồn tại.");
         }
+        //check email
+        $stmt = $this->user->searchByEmail($data);
+        if (count($stmt) != 0) {
+            return APIResponse::error("Email đã tồn tại.");
+        }
+        $stmt = $this->user->updateEmail($data);
+        if (!$stmt) {
+            return APIResponse::error("Không thể cập nhật thông tin người dùng.");
+        }
+        return APIResponse::success($stmt);
+    }
+
+    public function forgetPassword($data)
+    {
+        $stmt = $this->user->searchByUsername($data);
+        if (count($stmt) == 0) {
+            return APIResponse::error("Username không tồn tại.");
+        }
+        $stmt = $this->user->updatePassword($data);
+        if (!$stmt) {
+            return APIResponse::error("Không thể cập nhật thông tin người dùng.");
+        }
+        return APIResponse::success($stmt);
     }
 }
