@@ -35,7 +35,7 @@ switch ($method) {
     case 'PUT':
         if (isset($uri_segments[2]) && $uri_segments[2] == 'update') {
             $data = json_decode(file_get_contents("php://input"), true);
-            $user_controller->updateUser($id, $data); // Cập nhật user
+            $user_controller->updateUser($data); // Cập nhật user
         } else {
             echo json_encode(["message" => "User ID required"]);
         }

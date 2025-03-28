@@ -68,58 +68,69 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function create($data) {
+    public function create($data)
+    {
         $query = "INSERT INTO " . $this->table_name . " 
                   (id, username, password, email) 
                   VALUES (?, ?, ?, ?)";
-    
+
         $stmt = $this->conn->prepare($query);
-    
+
         // Assign values to temporary variables
         $username = isset($data['username']) ? $data['username'] : '';
         $password = isset($data['password']) ? $data['password'] : '';
         $email = isset($data['email']) ? $data['email'] : '';
-    
+
         // Clean data
         $this->username = htmlspecialchars(strip_tags($username));
         $this->password = htmlspecialchars(strip_tags($password));
         $this->email = htmlspecialchars(strip_tags($email));
-    
+
         $id = $this->generateRandomAlphaNumeric();
         $hashedPassword = $this->hashPassword($this->password);
 
         $stmt->bind_param("ssss", $id, $this->username, $hashedPassword, $this->email);
-        
+
         return $stmt->execute() ? true : false;
     }
 
     public function update($data)
-{
-    $query = "UPDATE " . $this->table_name . " SET password = ?, email = ? WHERE username = ?";
+    {
+        // Lấy dữ liệu từ $data
+        $username = isset($data['username']) ? $data['username'] : '';
+        $password = isset($data['password']) ? $data['password'] : '';
+        $email = isset($data['email']) ? $data['email'] : '';
 
-    $stmt = $this->conn->prepare($query);
+        // Làm sạch dữ liệu
+        $username = htmlspecialchars(strip_tags($username));
+        $password = htmlspecialchars(strip_tags($password));
+        $email = htmlspecialchars(strip_tags($email));
+        if ($password = '') {
+            return false;
+        }
+        if ($email == '') {
+            $query = "UPDATE " . $this->table_name . " SET password = ? WHERE username = ?";
+        } else {
+            $query = "UPDATE " . $this->table_name . " SET password = ?, email = ? WHERE username = ?";
+        }
 
-    // Lấy dữ liệu từ $data
-    $username = isset($data['username']) ? $data['username'] : '';
-    $password = isset($data['password']) ? $data['password'] : '';
-    $email = isset($data['email']) ? $data['email'] : '';
+        $stmt = $this->conn->prepare($query);
 
-    // Làm sạch dữ liệu
-    $username = htmlspecialchars(strip_tags($username));
-    $password = htmlspecialchars(strip_tags($password));
-    $email = htmlspecialchars(strip_tags($email));
+        $hashedPassword = $this->hashPassword($password);
 
-    $hashedPassword = $this->hashPassword($password);
+        if ($email == '') {
+            $stmt->bind_param("ss", $hashedPassword, $username);
+        } else {
+            $stmt->bind_param("sss", $hashedPassword, $email, $username);
+        }
 
-    $stmt->bind_param("sss", $hashedPassword, $email, $username);
-
-    // Thực thi truy vấn
-    if ($stmt->execute()) {
-        return $stmt->affected_rows ; // Trả về true nếu có dòng bị ảnh hưởng
-    } else {
-        return false; // Trả về false nếu thất bại
+        // Thực thi truy vấn
+        if ($stmt->execute()) {
+            return $stmt->affected_rows > 0; // Trả về true nếu có dòng bị ảnh hưởng
+        } else {
+            return false; // Trả về false nếu thất bại
+        }
     }
-}
 
 
     public function delete()
@@ -131,11 +142,11 @@ class User
         $this->id = htmlspecialchars(strip_tags($this->id));
 
         $stmt->bindParam(1, $this->id);
-        
+
         return $stmt->execute() ? true : false;
     }
 
-    public function login($data)
+    public function loginByUsername($data)
     {
         $query = "SELECT * FROM " . $this->table_name . " WHERE username = ? AND password = ?";
 
@@ -156,7 +167,33 @@ class User
             $users[] = $row;
         }
         $result->free();
-        $stmt->close(); 
+        $stmt->close();
+
+        return $users;
+    }
+
+    public function loginByEmail($data)
+    {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE email = ? AND password = ?";
+
+        $stmt = $this->conn->prepare($query);
+
+        $email = isset($data['email']) ? $data['email'] : '';
+        $this->email = htmlspecialchars(strip_tags($email));
+        $password = isset($data['password']) ? $data['password'] : '';
+        $this->password = htmlspecialchars(strip_tags($password));
+        // $keywords = "%{$keywords}%";
+        $hashedPassword = $this->hashPassword($password);
+        $stmt->bind_param("ss", $this->email, $hashedPassword);
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $result->free();
+        $stmt->close();
 
         return $users;
     }
@@ -180,9 +217,9 @@ class User
             $users[] = $row;
         }
         $result->free();
-        $stmt->close(); 
+        $stmt->close();
 
-        return $users; 
+        return $users;
     }
 
     public function searchByEmail($data)
@@ -190,7 +227,7 @@ class User
         $query = "SELECT * FROM " . $this->table_name . " WHERE email = ?";
 
         $stmt = $this->conn->prepare($query);
-        
+
         $email = isset($data['email']) ? $data['email'] : '';
         $this->email = htmlspecialchars(strip_tags($email));
 
@@ -203,9 +240,9 @@ class User
             $users[] = $row;
         }
         $result->free();
-        $stmt->close(); 
+        $stmt->close();
 
-        return $users; 
+        return $users;
     }
 
     // hass pass
