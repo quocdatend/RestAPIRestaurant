@@ -80,19 +80,26 @@ class UserController
 
     public function login($data)
     {
-        // if (!Validator::validateUsername($data['username'])) {
-        //     APIResponse::error("Username phải có ít nhất 8 ký tự, chứa chữ hoa,
-        //     chữ thường, số và ký tự đặc biệt.");
-        //     return ["message" => "User created faild"];
-        // }
-        // if (!Validator::validateEmail($data['email'])) {
-        //     APIResponse::error("Email không hợp lệ.");
-        //     return ["message" => "User created faild"];
-        // }
-        // // check exits username
-        // $stmt = $this->user->searchByUsername($data);
-        // if (count($stmt) != 0) {
-        //     APIResponse::error("Username đã tồn tại.");
-        // }
+        $stmt = $this->user->login($data);
+        if (count($stmt) == 0) {
+            //APIResponse::error("Username đã tồn tại.");
+            return APIResponse::error("Login faild");
+        }
+
+        return APIResponse::success($stmt);
+    }
+
+    public function updateUser($data)
+    {
+        //check username 
+        $stmt = $this->user->searchByUsername($data);
+        if (count($stmt) == 0) {
+            return APIResponse::error($stmt);
+        }
+        $stmt = $this->user->update($data);
+        if (!$stmt) {
+            return APIResponse::error("Không thể cập nhật thông tin người dùng.");
+        }
+        return APIResponse::success($stmt);
     }
 }
