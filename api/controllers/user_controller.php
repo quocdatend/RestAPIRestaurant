@@ -99,7 +99,9 @@ class UserController
         if (count($stmt) == 0) {
             return APIResponse::error("Password incorrect");
         }
-        return APIResponse::success($stmt);
+        $token = JWTHandler::generateToken($stmt[0]["id"], $stmt[0]["email"], $stmt[0]["username"]);
+        
+        return APIResponse::success($token);
     }
 
     public function updateUser($data)
