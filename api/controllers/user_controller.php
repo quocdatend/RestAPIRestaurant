@@ -16,6 +16,19 @@ class UserController
         $this->user = new User($this->db);
     }
 
+    // get one
+    public function getUser($id)
+    {   
+        $userData = AuthMiddleware::verifyToken();
+        if($userData) {
+            http_response_code(401);
+            return APIResponse::error("Unauthorized");
+        }
+        $stmt = $this->user->searchById($id);
+        return $stmt;
+    }
+
+
     // get all
     public function getUsers()
     {
@@ -40,8 +53,6 @@ class UserController
         http_response_code(200);
         echo json_encode($users_arr);
     }
-
-
 
     // create
     public function createUser($data)
@@ -100,7 +111,7 @@ class UserController
             return APIResponse::error("Password incorrect");
         }
         $token = JWTHandler::generateToken($stmt[0]["id"], $stmt[0]["email"], $stmt[0]["username"]);
-        
+
         return APIResponse::success($token);
     }
 
