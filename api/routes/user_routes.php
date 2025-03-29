@@ -16,7 +16,7 @@ $id = isset($uri_segments[2]) ? $uri_segments[2] : null;
 switch ($method) {
     case 'GET':
         if (isset($id)) {
-            //$user_controller->getUserByUsername($id); // Lấy user theo ID
+            $user_controller->getUser($id); // Lấy user theo ID
         } else {
             $user_controller->getUsers(); // Lấy danh sách users
         }
@@ -36,10 +36,9 @@ switch ($method) {
         if (isset($uri_segments[2]) && $uri_segments[2] == 'update') {
             $data = json_decode(file_get_contents("php://input"), true);
             $user_controller->updateUser($data); // Cập nhật user
-        // } else if (isset($uri_segments[2]) && $uri_segments[2] == 'forgetPassword') {
-        //     $data = json_decode(file_get_contents("php://input"), true);
-        //     $user_controller->forgetPassword($data);
-
+        } else if (isset($uri_segments[2]) && $uri_segments[2] == 'forgetPassword') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $user_controller->forgetPassword($data);
         } else {
             echo json_encode(["message" => "User ID required"]);
         }

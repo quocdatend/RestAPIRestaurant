@@ -52,20 +52,21 @@ class User
         return (int)$row['total'];
     }
 
-    // public function read() {
-    //     $query = "SELECT * FROM " . $this->table_name;
-    //     $stmt = $this->conn->prepare($query);
-    //     $stmt->execute();
-    //     return $stmt;
-    // }
-
     public function readOne()
     {
         $query = "SELECT * FROM " . $this->table_name . " WHERE id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $this->id);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $result->free();
+        $stmt->close();
+
+        return $users;
     }
 
     public function create($data)
@@ -243,6 +244,22 @@ class User
 
         $stmt->bind_param("s", $this->email);
 
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $result->free();
+        $stmt->close();
+
+        return $users;
+    }
+
+    public function searchById($id) {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $id);
         $stmt->execute();
         $result = $stmt->get_result();
         $users = [];

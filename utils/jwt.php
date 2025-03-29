@@ -13,13 +13,14 @@ class JWTHandler {
 
     // Khởi tạo JWTHandler với secret key từ .env hoặc config
     public static function init() {
-        self::$secret_key = getenv("JWT_SECRET") ?: "your_fallback_secret"; // Thay thế "your_fallback_secret"
+        self::$secret_key = getenv("JWT_SECRET") ?: "0bbe045e916673a9c8eab7dcd0dea0112509f466c47121ad86759d9a22d7c7fd"; // Thay thế "your_fallback_secret"
     }
 
     // Tạo JWT
-    public static function generateToken($user_id, $email) {
+    public static function generateToken($user_id, $email, $username) {
         $payload = [
             "sub" => $user_id,
+            "username" => $username,
             "email" => $email,
             "iat" => time(),
             "exp" => time() + 3600 // Token hết hạn sau 1 giờ

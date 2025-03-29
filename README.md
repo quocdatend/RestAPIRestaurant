@@ -55,15 +55,19 @@ project-restapi/
 
 <!-- huong dann restapi -->
 # GET - Lấy thông tin đơn hàng theo ID
+```
 GET http://localhost/restapirestaurant/order/{id}
-
+```
 # GET - Lấy danh sách đơn hàng theo trạng thái
+```
 GET http://localhost/restapirestaurant/order/status/{status}
-
+```
 # GET - Lấy danh sách tất cả đơn hàng
+```
 GET http://localhost/restapirestaurant/order
-
+```
 # POST - Tạo đơn hàng mới
+```
 POST http://localhost/restapirestaurant/order
 {
   "user_id": 7,
@@ -87,8 +91,9 @@ POST http://localhost/restapirestaurant/order
     }
   ]
 }
-
+```
 # POST - Thêm sản phẩm vào đơn hàng
+```
 POST http://localhost/restapirestaurant/order/items/{id}
 Content-Type: application/json
 {
@@ -99,15 +104,17 @@ Content-Type: application/json
     }
   ]
 }
-
+```
 # PUT - Cập nhật trạng thái đơn hàng
+```
 PUT http://localhost/restapirestaurant/order/status/{id}
 Content-Type: application/json
 {
   "newStatus": "confirmed"
 }
-
+```
 # PUT - Cập nhật thông tin đơn hàng
+```
 PUT http://localhost/restapirestaurant/order/{id}
 Content-Type: application/json
 {
@@ -118,9 +125,12 @@ Content-Type: application/json
     }
   ]
 }
-
+```
 # DELETE - Xóa một sản phẩm trong đơn hàng
+```
 DELETE http://localhost/restapirestaurant/order/item/{orderItemId}
-
+```
 # DELETE - Xóa toàn bộ đơn hàng
+```
 DELETE http://localhost/restapirestaurant/order/{id}
+```
