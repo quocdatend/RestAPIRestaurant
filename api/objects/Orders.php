@@ -21,7 +21,6 @@ class Orders
     }
     public function create()
     {
-        // Không lưu cột items vào bảng orders, chỉ lưu các cột khác
         $query = "INSERT INTO " . $this->table_name . " (user_id, total_price, num_people, special_request, customer_name, order_date, order_time) 
                   VALUES (?, ?, ?, ?, ?, ?, ?)";
 
@@ -69,7 +68,8 @@ class Orders
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function update() {
+    public function update()
+    {
         $query = "UPDATE " . $this->table_name . " 
                   SET user_id = ?, total_price = ?, num_people = ?, special_request = ?, customer_name = ?
                   WHERE id = ?";
@@ -83,38 +83,38 @@ class Orders
         $stmt->close();
         return $result;
     }
-    
+
     public function delete()
     {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
         $stmt = $this->conn->prepare($query);
         if ($stmt === false) {
-            error_log("Prepare failed: " . $this->conn->error); 
+            error_log("Prepare failed: " . $this->conn->error);
             return false;
         }
-        $this->orderId = (int) $this->orderId; 
-        $stmt->bind_param("i", $this->orderId); 
+        $this->orderId = (int) $this->orderId;
+        $stmt->bind_param("i", $this->orderId);
         $result = $stmt->execute();
-        $stmt->close(); 
+        $stmt->close();
         return $result;
     }
-    
+
     public function readAll()
     {
         $query = "SELECT o.id, o.user_id, u.username, u.email, o.total_price, o.num_people, 
-                         o.special_request, o.customer_name, o.order_date, o.order_time
+                         o.special_request, o.customer_name, o.order_date, o.order_time , o.status
                   FROM " . $this->table_name . " o
                   JOIN user u ON o.user_id = u.id";
-    
+
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
-    
+
         $result = $stmt->get_result(); // Lấy dữ liệu
         $data = $result->fetch_all(MYSQLI_ASSOC); // Chuyển thành mảng kết quả
-    
-        return $data; 
+
+        return $data;
     }
-    
+
     // Read an order by ID with user details
     public function readById($orderId)
     {
@@ -129,5 +129,46 @@ class Orders
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    public function changeStatus($orderId, $newStatus)
+    {
+        $query = "UPDATE " . $this->table_name . " SET status = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        if ($stmt === false) {
+            throw new Exception("Prepare failed: " . $this->conn->error);
+        }
+
+        // Bind các tham số: "ii" nghĩa là 2 tham số kiểu integer
+        $stmt->bind_param("ii", $newStatus, $orderId);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+        throw new Exception("Execute failed: " . $stmt->error);
+    }
+    public function readAllByStatus()
+    {
+        $query = "SELECT * FROM " . $this->table_name . " ORDER BY status ASC";
+        $stmt = $this->conn->prepare($query);
+        if ($stmt === false) {
+            throw new Exception("Prepare failed: " . $this->conn->error);
+        }
+        if (!$stmt->execute()) {
+            throw new Exception("Execute failed: " . $stmt->error);
+        }
+        $result = $stmt->get_result();
+        $orders = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $orders;
+    }
+    public function readByStatus($status)
+    {
+        $query = "SELECT * FROM orders WHERE status = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $status);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 }

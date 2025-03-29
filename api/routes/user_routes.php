@@ -31,7 +31,6 @@ switch ($method) {
     case 'PUT':
         if ($id) {
             $data = json_decode(file_get_contents("php://input"), true);
-            // echo json_encode($user_controller->updateUser($id, $data)); // Cập nhật user
         } else {
             echo json_encode(["message" => "User ID required"]);
         }
