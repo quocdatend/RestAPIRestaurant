@@ -2,6 +2,9 @@
 require_once '../api/objects/user.php';
 require_once '../utils/validator.php';
 require_once '../utils/response.php';
+require_once __DIR__ . '/../../middlewares/auth_middleware.php';
+require_once __DIR__ . '/../../utils/jwt.php';
+
 class UserController
 {
     private $db;
