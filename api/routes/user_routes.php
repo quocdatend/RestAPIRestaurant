@@ -26,6 +26,12 @@ switch ($method) {
         if(isset($uri_segments[2]) && $uri_segments[2] == 'login') {
             $data = json_decode(file_get_contents("php://input"), true);
             $user_controller->login($data);
+        }else if (isset($uri_segments[2]) && $uri_segments[2] == 'forgetPassword') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $user_controller->forgetPassword($data);
+        } if (isset($uri_segments[2]) && $uri_segments[2] == 'resetPassword') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $user_controller->resetPassword($data);
         } else {
             $data = json_decode(file_get_contents("php://input"), true);
             echo json_encode($user_controller->createUser($data)); // Tạo user mới
@@ -36,10 +42,7 @@ switch ($method) {
         if (isset($uri_segments[2]) && $uri_segments[2] == 'update') {
             $data = json_decode(file_get_contents("php://input"), true);
             $user_controller->updateUser($data); // Cập nhật user
-        } else if (isset($uri_segments[2]) && $uri_segments[2] == 'forgetPassword') {
-            $data = json_decode(file_get_contents("php://input"), true);
-            $user_controller->forgetPassword($data);
-        } else {
+        }  else {
             echo json_encode(["message" => "User ID required"]);
         }
         break;

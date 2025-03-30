@@ -52,8 +52,18 @@ project-restapi/
 └── README.md                  # Hướng dẫn sử dụng
 ```
 
+<!-- Hướng dẫn cài đặt -->
+- Tải composer từ link --https://getcomposer.org/download/
+- Kiểm tra phiên bản
+```
+composer --version
+```
+- Cập nhật lại composer
+```
+composer install
+```
 
-<!-- huong dann restapi -->
+<!-- huong dan restapi -->
 # GET - Lấy thông tin đơn hàng theo ID
 ```
 GET http://localhost/restapirestaurant/order/{id}
@@ -134,3 +144,61 @@ DELETE http://localhost/restapirestaurant/order/item/{orderItemId}
 ```
 DELETE http://localhost/restapirestaurant/order/{id}
 ```
+# GET - lấy tất cả users
+```
+GET http://localhost/restapirestaurant/users
+```
+# GET - lấy thông tin user theo token
+```
+GET http://localhost/restapirestaurant/users/response
+Authorizaization Bearer Token {token}
+```
+# POST - tạo user
+```
+POST http://localhost/restapirestaurant/users
+Content-Type: application/json
+{
+  "username": "abcabc",
+  "password": "123",
+  "email": "abc@gmail.com",
+}
+```
+# POST - login
+```
+GET http://localhost/restapirestaurant/users/login
+Content-Type: application/json
+{
+  "username": "abc", // username and email
+  "password": "123"
+}
+```
+# PUT - update email user
+```
+PUT http://localhost/restapirestaurant/users/update
+Content-Type: application/json
+{
+  "username": "abcabc",
+  "password": "123",
+}
+```
+# POST - forget password
+```
+POST http://localhost/restapirestaurant/users/forgetPassword
+Content-Type: application/json
+{
+  "email": "abc@gmail.com"
+  "to" : "abc@gmail.com",
+  "subject" : "abc",
+  "body" : "abc",
+}
+```
+# POST - reset password
+```
+POST http://localhost/restapirestaurant/users/resetPassword
+Authurizarition Bearer Token {Token}
+Content-Type: application/json
+{
+  "password": "abc",
+}
+```
+
