@@ -1,25 +1,26 @@
 <?php
 require_once __DIR__ . '/../utils/jwt.php';
 
-class AuthMiddleware {
-    public static function authenticate() {
+class AuthMiddleware
+{
+    public static function verifyToken()
+    {
         $headers = getallheaders();
-        $token = $headers['Authorization'] ?? '';
-
-        if (!$token) {
+        if (!isset($headers["Authorization"])) {
             http_response_code(401);
-            echo json_encode(["error" => "Unauthorized: Missing token"]);
-            exit;
+            echo json_encode(["error" => "Token không được cung cấp"]);
+            exit();
         }
 
-        $decoded = JWTHandler::verifyToken($token);
-        if (!$decoded) {
-            http_response_code(403);
-            echo json_encode(["error" => "Forbidden: Invalid token"]);
-            exit;
+        $token = str_replace("Bearer ", "", $headers["Authorization"]);
+        $decoded = (array) JWTHandler::verifyToken($token);
+
+        if (isset($decoded["error"])) {
+            http_response_code(401);
+            echo json_encode(["error" => $decoded["error"]]);
+            exit();
         }
 
         return $decoded;
     }
 }
-?>

@@ -51,8 +51,157 @@ project-restapi/
 ├── composer.json              # Quản lý dependencies
 └── README.md                  # Hướng dẫn sử dụng
 ```
----------menu-----------
+# Hướng dẫn cài đặt 
+- Tải composer từ link --https://getcomposer.org/download/
+- Kiểm tra phiên bản
+```
+composer --version
+```
+- Cập nhật lại composer
+```
+composer install
+```
+
+# huong dan restapi
+## GET - Lấy thông tin đơn hàng theo ID
+```
+GET http://localhost/restapirestaurant/order/{id}
+```
+## GET - Lấy danh sách đơn hàng theo trạng thái
+```
+GET http://localhost/restapirestaurant/order/status/{status}
+```
+## GET - Lấy danh sách tất cả đơn hàng
+```
+GET http://localhost/restapirestaurant/order
+```
+## POST - Tạo đơn hàng mới
+```
+POST http://localhost/restapirestaurant/order
+{
+  "user_id": 7,
+  "username": "quocdat",
+  "email": "abc@gmail.com",
+  "total_price": "89.99",
+  "num_people": 4,
+  "special_request": "No onions",
+  "customer_name": "Jane Smith",
+  "order_date": "2025-03-25",
+  "order_time": "18:45:00",
+  "status": 1,
+  "order_items": [
+    {
+      "menu_item_id": 101,
+      "status": "pending"
+    },
+    {
+      "menu_item_id": 102,
+      "status": "confirmed"
+    }
+  ]
+}
+```
+## POST - Thêm sản phẩm vào đơn hàng
+```
+POST http://localhost/restapirestaurant/order/items/{id}
+Content-Type: application/json
+{
+  "items": [
+    {
+      "menu_item_id": 103,
+      "quantity": 2
+    }
+  ]
+}
+```
+## PUT - Cập nhật trạng thái đơn hàng
+```
+PUT http://localhost/restapirestaurant/order/status/{id}
+Content-Type: application/json
+{
+  "newStatus": "confirmed"
+}
+```
+## PUT - Cập nhật thông tin đơn hàng
+```
+PUT http://localhost/restapirestaurant/order/{id}
+Content-Type: application/json
+{
+  "items": [
+    {
+      "menu_item_id": 101,
+      "quantity": 3
+    }
+  ]
+}
+```
+## DELETE - Xóa một sản phẩm trong đơn hàng
+```
+DELETE http://localhost/restapirestaurant/order/item/{orderItemId}
+```
+## DELETE - Xóa toàn bộ đơn hàng
+```
+DELETE http://localhost/restapirestaurant/order/{id}
+```
+## GET - lấy tất cả users
+```
+GET http://localhost/restapirestaurant/users
+```
+## GET - lấy thông tin user theo token
+```
+GET http://localhost/restapirestaurant/users/response
+Authorizaization Bearer Token {token}
+```
+## POST - tạo user
+```
+POST http://localhost/restapirestaurant/users
+Content-Type: application/json
+{
+  "username": "abcabc",
+  "password": "123",
+  "email": "abc@gmail.com",
+}
+```
+## POST - login
+```
+GET http://localhost/restapirestaurant/users/login
+Content-Type: application/json
+{
+  "username": "abc", // username and email
+  "password": "123"
+}
+```
+## PUT - update email user
+```
+PUT http://localhost/restapirestaurant/users/update
+Content-Type: application/json
+{
+  "username": "abcabc",
+  "password": "123",
+}
+```
+## POST - forget password
+```
+POST http://localhost/restapirestaurant/users/forgetPassword
+Content-Type: application/json
+{
+  "email": "abc@gmail.com"
+  "to" : "abc@gmail.com",
+  "subject" : "abc",
+  "body" : "abc",
+}
+```
+## POST - reset password
+```
+POST http://localhost/restapirestaurant/users/resetPassword
+Authurizarition Bearer Token {Token}
+Content-Type: application/json
+{
+  "password": "abc",
+}
+```
+## menu
 http://localhost/RestAPIRestaurant/products
 
-detail
+## detail
 http://localhost/RestAPIRestaurant/products/101
