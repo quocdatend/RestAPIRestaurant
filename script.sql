@@ -89,3 +89,20 @@ INSERT INTO `user` (`id`, `username`, `password`, `email`) VALUES
 ('Wp46dCAo32SNZytl', 'Quocdat@123', '6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090', 'abc1234@gmail.com'),
 ('3mcK8AG02ofkRXOq', 'Quocdat@1324', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'abcc1234@gmail.com');
 COMMIT;
+
+
+
+--Table reviews
+CREATE TABLE reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customerName VARCHAR(255) NOT NULL,
+    rating INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    date DATETIME NOT NULL
+);
+INSERT INTO reviews (customerName, rating, title, content, date)
+VALUES 
+ ('Trần Thị B', 4, 'Dịch vụ tốt', 'Mặc dù có một số sự cố nhỏ trong quá trình tổ chức sự kiện, nhưng tổng thể dịch vụ khá tốt và chúng tôi hài lòng.', '2023-12-02 10:00:00'),
+    ('Lê Quang C', 3, 'Cần cải thiện', 'Dịch vụ chưa thực sự như mong đợi. Nhân viên có phần thiếu chuyên nghiệp và có một số thiếu sót trong buổi tiệc.', '2023-12-03 14:30:00'),
+    ('Nguyễn Hoàng D', 5, 'Hoàn hảo', 'Tôi rất ấn tượng với chất lượng dịch vụ tại nhà hàng. Mọi thứ đều rất tuyệt vời từ phục vụ đến món ăn.', '2023-12-04 09:45:00');

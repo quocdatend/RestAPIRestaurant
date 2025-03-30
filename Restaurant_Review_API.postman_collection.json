@@ -1,0 +1,172 @@
+{
+	"info": {
+		"_postman_id": "b5e8f9b9-9b9b-9b9b-9b9b-9b9b9b9b9b9b",
+		"name": "Restaurant Review API",
+		"description": "Collection for testing Restaurant Review API endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Review",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customerName\": \"Nguyễn Văn A\",\n    \"rating\": 5,\n    \"title\": \"Món ăn rất ngon\",\n    \"content\": \"Món ăn rất ngon, phục vụ nhanh chóng!\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost/RestAPIRestaurant/reviews/create",
+					"protocol": "http",
+					"host": ["localhost"],
+					"path": ["RestAPIRestaurant", "reviews", "create"]
+				},
+				"description": "Create a new review"
+			}
+		},
+		{
+			"name": "Get All Reviews",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/RestAPIRestaurant/reviews",
+					"protocol": "http",
+					"host": ["localhost"],
+					"path": ["RestAPIRestaurant", "reviews"]
+				},
+				"description": "Get all reviews"
+			}
+		},
+		{
+			"name": "Get Single Review",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/RestAPIRestaurant/reviews/1",
+					"protocol": "http",
+					"host": ["localhost"],
+					"path": ["RestAPIRestaurant", "reviews", "1"]
+				},
+				"description": "Get a single review by ID"
+			}
+		},
+		{
+			"name": "Update Review",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"customerName\": \"Nguyễn Văn A\",\n    \"rating\": 4,\n    \"title\": \"Món ăn ngon\",\n    \"content\": \"Món ăn ngon, phục vụ hơi chậm\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost/RestAPIRestaurant/reviews/update",
+					"protocol": "http",
+					"host": ["localhost"],
+					"path": ["RestAPIRestaurant", "reviews", "update"]
+				},
+				"description": "Update an existing review"
+			}
+		},
+		{
+			"name": "Delete Review",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1\n}"
+				},
+				"url": {
+					"raw": "http://localhost/RestAPIRestaurant/reviews/delete",
+					"protocol": "http",
+					"host": ["localhost"],
+					"path": ["RestAPIRestaurant", "reviews", "delete"]
+				},
+				"description": "Delete a review"
+			}
+		},
+		{
+			"name": "Test Cases",
+			"item": [
+				{
+					"name": "Invalid Rating",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customerName\": \"Nguyễn Văn A\",\n    \"rating\": 6,\n    \"title\": \"Món ăn rất ngon\",\n    \"content\": \"Món ăn rất ngon, phục vụ nhanh chóng!\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost/RestAPIRestaurant/reviews/create",
+							"protocol": "http",
+							"host": ["localhost"],
+							"path": ["RestAPIRestaurant", "reviews", "create"]
+						},
+						"description": "Test with invalid rating (should return 400)"
+					}
+				},
+				{
+					"name": "Missing Required Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customerName\": \"Nguyễn Văn A\",\n    \"rating\": 5,\n    \"title\": \"Món ăn rất ngon\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost/RestAPIRestaurant/reviews/create",
+							"protocol": "http",
+							"host": ["localhost"],
+							"path": ["RestAPIRestaurant", "reviews", "create"]
+						},
+						"description": "Test with missing required fields (should return 400)"
+					}
+				},
+				{
+					"name": "Non-existent ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/RestAPIRestaurant/reviews/999",
+							"protocol": "http",
+							"host": ["localhost"],
+							"path": ["RestAPIRestaurant", "reviews", "999"]
+						},
+						"description": "Test with non-existent ID (should return 404)"
+					}
+				}
+			]
+		}
+	]
+} 
