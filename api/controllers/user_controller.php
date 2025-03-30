@@ -4,6 +4,7 @@ require_once '../utils/validator.php';
 require_once '../utils/response.php';
 require_once __DIR__ . '/../../middlewares/auth_middleware.php';
 require_once __DIR__ . '/../../utils/jwt.php';
+require_once __DIR__ . '/../../services/email_service.php';
 
 class UserController
 {
@@ -18,9 +19,9 @@ class UserController
 
     // get one
     public function getUser()
-    {   
+    {
         $userData = AuthMiddleware::verifyToken();
-        if(count((array) $userData)==0) {
+        if (count((array) $userData) == 0) {
             http_response_code(401);
             return APIResponse::error("Unauthorized");
         } else {
@@ -142,11 +143,38 @@ class UserController
         if (count($stmt) == 0) {
             return APIResponse::error("Username không tồn tại.");
         }
-        
+        // check data
+        $to = isset($data["to"]) ? $data["to"] : null;
+        $sub = isset($data["sub"]) ? $data["sub"] : null;
+        $body = isset($data["body"]) ? $data["body"] : null;
+
+        if(is_null($to) || is_null($sub) || is_null($body)) {
+            return APIResponse::error("Thiếu dữ liệu");
+        }
+        // link reset
+        $body += "Link Reset Password" . " ";
+        // send email
+        $emailService = new EmailService();
+        $emailService->sendEmail($data["to"], $data["sub"], $data["body"]);
+        return APIResponse::success("Đã gửi email reset Password");
+    }
+
+    public function resetPassword($data)
+    {
+        // check token
+        $userData = AuthMiddleware::verifyToken();
+        if (count((array) $userData) == 0) {
+            return APIResponse::error("Token không hợp lệ.");
+        }
+        $data["username"] = $userData["username"];
+        // check password
+        if ($data["password"] != $data["repassword"]) {
+            return APIResponse::error("Mật khẩu không khớp.");
+        }
+        // update password
         $stmt = $this->user->updatePassword($data);
         if (!$stmt) {
             return APIResponse::error("Không thể cập nhật thông tin người dùng.");
         }
-        return APIResponse::success($stmt);
     }
 }
