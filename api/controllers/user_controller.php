@@ -17,15 +17,17 @@ class UserController
     }
 
     // get one
-    public function getUser($id)
+    public function getUser()
     {   
         $userData = AuthMiddleware::verifyToken();
-        if($userData) {
+        if(count((array) $userData)==0) {
             http_response_code(401);
             return APIResponse::error("Unauthorized");
+        } else {
+            return APIResponse::success($userData);
         }
-        $stmt = $this->user->searchById($id);
-        return $stmt;
+        // $stmt = $this->user->searchById($id);
+        // return $stmt;
     }
 
 
@@ -136,10 +138,11 @@ class UserController
 
     public function forgetPassword($data)
     {
-        $stmt = $this->user->searchByUsername($data);
+        $stmt = $this->user->searchByEmail($data);
         if (count($stmt) == 0) {
             return APIResponse::error("Username không tồn tại.");
         }
+        
         $stmt = $this->user->updatePassword($data);
         if (!$stmt) {
             return APIResponse::error("Không thể cập nhật thông tin người dùng.");

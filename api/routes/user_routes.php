@@ -15,8 +15,8 @@ $id = isset($uri_segments[2]) ? $uri_segments[2] : null;
 
 switch ($method) {
     case 'GET':
-        if (isset($id)) {
-            $user_controller->getUser($id); // Lấy user theo ID
+        if (isset($uri_segments[2]) && $uri_segments[2] == 'response') {
+            $user_controller->getUser(); // Lấy user theo ID $id
         } else {
             $user_controller->getUsers(); // Lấy danh sách users
         }
