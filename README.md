@@ -51,3 +51,8 @@ project-restapi/
 ├── composer.json              # Quản lý dependencies
 └── README.md                  # Hướng dẫn sử dụng
 ```
+---------menu-----------
+http://localhost/RestAPIRestaurant/products
+
+detail
+http://localhost/RestAPIRestaurant/products/101
