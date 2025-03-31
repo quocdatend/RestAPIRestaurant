@@ -166,6 +166,7 @@ CREATE TABLE `order_items` (
   FOREIGN KEY (`menu_item_id`) REFERENCES `menu_items`(`id`) ON DELETE CASCADE
 );
 
+
 INSERT INTO `order_items` (`id`, `order_id`, `menu_item_id`, `status`) VALUES
 (5, 3, 101, 'pending'),
 (6, 2, 101, 'pending'),
