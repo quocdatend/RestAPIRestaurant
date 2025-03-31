@@ -63,8 +63,8 @@ class UserController
     {
         $requiredFields = ['username', 'password', 'password'];
 
-        // Sử dụng validateMiddleware để kiểm tra dữ liệu đầu vào
-        if (!validateMiddleware($data, $requiredFields)) {
+        // Sử dụng ValidateMiddleware::handle để kiểm tra dữ liệu đầu vào
+        if (!ValidateMiddleware::handle($data, $requiredFields)) {
             // Nếu dữ liệu không hợp lệ, kết thúc xử lý
             return APIResponse::error("Invalid data");
         }
@@ -96,20 +96,19 @@ class UserController
 
         if ($this->user->create($data)) {
             http_response_code(201);
-            echo json_encode(array("message" => "Người dùng được tạo thành công."));
+            return ["message" => "Người dùng được tạo thành công."];
         } else {
             http_response_code(503);
-            echo json_encode(array("message" => "Không thể tạo tài khoản."));
+            return ["message" => "Không thể tạo tài khoản."];
         }
-        return ["message" => "User created successfully"];
     }
 
     public function login($data)
     {
         $requiredFields = ['password'];
 
-        // Sử dụng validateMiddleware để kiểm tra dữ liệu đầu vào
-        if (!validateMiddleware($data, $requiredFields)) {
+        // Sử dụng ValidateMiddleware::handle để kiểm tra dữ liệu đầu vào
+        if (!ValidateMiddleware::handle($data, $requiredFields)) {
             // Nếu dữ liệu không hợp lệ, kết thúc xử lý
             return APIResponse::error("Invalid data");
         }
@@ -138,8 +137,8 @@ class UserController
     {
         $requiredFields = ['username', 'password'];
 
-        // Sử dụng validateMiddleware để kiểm tra dữ liệu đầu vào
-        if (!validateMiddleware($data, $requiredFields)) {
+        // Sử dụng ValidateMiddleware::handle để kiểm tra dữ liệu đầu vào
+        if (!ValidateMiddleware::handle($data, $requiredFields)) {
             // Nếu dữ liệu không hợp lệ, kết thúc xử lý
             return APIResponse::error("Invalid data");
         }
@@ -162,30 +161,30 @@ class UserController
 
     public function forgetPassword($data)
     {
-        $requiredFields = ['username'];
+        $requiredFields = ['email'];
 
-        // Sử dụng validateMiddleware để kiểm tra dữ liệu đầu vào
-        if (!validateMiddleware($data, $requiredFields)) {
-            // Nếu dữ liệu không hợp lệ, kết thúc xử lý
-            return APIResponse::error("Invalid data");
+        if (!ValidateMiddleware::handle($data, $requiredFields)) {
+            return;
+        }
+        $requiredFields = ['to', 'sub', 'body'];
+
+        if (!ValidateMiddleware::handle($data, $requiredFields)) {
+            return;
         }
         $stmt = $this->user->searchByEmail($data);
         if (count($stmt) == 0) {
-            return APIResponse::error("Username không tồn tại.");
+            return APIResponse::error("Email không tồn tại.");
         }
         // check data
         $to = isset($data["to"]) ? $data["to"] : null;
         $sub = isset($data["sub"]) ? $data["sub"] : null;
         $body = isset($data["body"]) ? $data["body"] : null;
 
-        if(is_null($to) || is_null($sub) || is_null($body)) {
-            return APIResponse::error("Thiếu dữ liệu");
-        }
-        // link reset
-        $body += "Link Reset Password" . " ";
+        $token = JWTHandler::generateTokenForResetPass();
+        $newBody = $body . $token;
         // send email
         $emailService = new EmailService();
-        $emailService->sendEmail($data["to"], $data["sub"], $data["body"]);
+        $emailService->sendEmail($to, $sub, $newBody);
         return APIResponse::success("Đã gửi email reset Password");
     }
 
@@ -193,10 +192,10 @@ class UserController
     {
         $requiredFields = ['username', 'password', 'repassword'];
 
-        // Sử dụng validateMiddleware để kiểm tra dữ liệu đầu vào
-        if (!validateMiddleware($data, $requiredFields)) {
+        // Sử dụng ValidateMiddleware::handle để kiểm tra dữ liệu đầu vào
+        if (!ValidateMiddleware::handle($data, $requiredFields)) {
             // Nếu dữ liệu không hợp lệ, kết thúc xử lý
-            return APIResponse::error("Invalid data");
+            return ;
         }
         // check token
         $userData = AuthMiddleware::verifyToken();
