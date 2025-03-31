@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../api/objects/user.php';
 require_once __DIR__ . '/../../utils/validator.php';
 require_once __DIR__ . '/../../utils/response.php';
 require_once __DIR__ . '/../../middlewares/auth_middleware.php';
-require_once __DIR__ . '/../../middlewares/validate_middleware.php';
+require_once __DIR__ . '/../../middlewares/validate_middlware.php';
 require_once __DIR__ . '/../../utils/jwt.php';
 require_once __DIR__ . '/../../services/email_service.php';
 
