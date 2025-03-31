@@ -51,22 +51,31 @@ project-restapi/
 ├── composer.json              # Quản lý dependencies
 └── README.md                  # Hướng dẫn sử dụng
 ```
+# Hướng dẫn cài đặt 
+- Tải composer từ link --https://getcomposer.org/download/
+- Kiểm tra phiên bản
+```
+composer --version
+```
+- Cập nhật lại composer
+```
+composer install
+```
 
-
-<!-- huong dann restapi -->
-# GET - Lấy thông tin đơn hàng theo ID
+# huong dan restapi
+## GET - Lấy thông tin đơn hàng theo ID
 ```
 GET http://localhost/restapirestaurant/order/{id}
 ```
-# GET - Lấy danh sách đơn hàng theo trạng thái
+## GET - Lấy danh sách đơn hàng theo trạng thái
 ```
 GET http://localhost/restapirestaurant/order/status/{status}
 ```
-# GET - Lấy danh sách tất cả đơn hàng
+## GET - Lấy danh sách tất cả đơn hàng
 ```
 GET http://localhost/restapirestaurant/order
 ```
-# POST - Tạo đơn hàng mới
+## POST - Tạo đơn hàng mới
 ```
 POST http://localhost/restapirestaurant/order
 {
@@ -92,7 +101,7 @@ POST http://localhost/restapirestaurant/order
   ]
 }
 ```
-# POST - Thêm sản phẩm vào đơn hàng
+## POST - Thêm sản phẩm vào đơn hàng
 ```
 POST http://localhost/restapirestaurant/order/items/{id}
 Content-Type: application/json
@@ -105,7 +114,7 @@ Content-Type: application/json
   ]
 }
 ```
-# PUT - Cập nhật trạng thái đơn hàng
+## PUT - Cập nhật trạng thái đơn hàng
 ```
 PUT http://localhost/restapirestaurant/order/status/{id}
 Content-Type: application/json
@@ -113,7 +122,7 @@ Content-Type: application/json
   "newStatus": "confirmed"
 }
 ```
-# PUT - Cập nhật thông tin đơn hàng
+## PUT - Cập nhật thông tin đơn hàng
 ```
 PUT http://localhost/restapirestaurant/order/{id}
 Content-Type: application/json
@@ -126,15 +135,78 @@ Content-Type: application/json
   ]
 }
 ```
-# DELETE - Xóa một sản phẩm trong đơn hàng
+## DELETE - Xóa một sản phẩm trong đơn hàng
 ```
 DELETE http://localhost/restapirestaurant/order/item/{orderItemId}
 ```
-# DELETE - Xóa toàn bộ đơn hàng
+## DELETE - Xóa toàn bộ đơn hàng
 ```
 DELETE http://localhost/restapirestaurant/order/{id}
 ```
-# Tạo đánh giá mới 
+## GET - lấy tất cả users
+```
+GET http://localhost/restapirestaurant/users
+```
+## GET - lấy thông tin user theo token
+```
+GET http://localhost/restapirestaurant/users/response
+Authorizaization Bearer Token {token}
+```
+## POST - tạo user
+```
+POST http://localhost/restapirestaurant/users
+Content-Type: application/json
+{
+  "username": "abcabc",
+  "password": "123",
+  "email": "abc@gmail.com",
+}
+```
+## POST - login
+```
+GET http://localhost/restapirestaurant/users/login
+Content-Type: application/json
+{
+  "username": "abc", // username and email
+  "password": "123"
+}
+```
+## PUT - update email user
+```
+PUT http://localhost/restapirestaurant/users/update
+Content-Type: application/json
+{
+  "username": "abcabc",
+  "password": "123",
+}
+```
+## POST - forget password
+```
+POST http://localhost/restapirestaurant/users/forgetPassword
+Content-Type: application/json
+{
+  "email": "abc@gmail.com"
+  "to" : "abc@gmail.com",
+  "subject" : "abc",
+  "body" : "abc",
+}
+```
+## POST - reset password
+```
+POST http://localhost/restapirestaurant/users/resetPassword
+Authurizarition Bearer Token {Token}
+Content-Type: application/json
+{
+  "password": "abc",
+}
+```
+## menu
+http://localhost/RestAPIRestaurant/products
+
+## detail
+http://localhost/RestAPIRestaurant/products/101
+
+## Tạo đánh giá mới 
 ```
 POST http://localhost/RestAPIRestaurant/reviews/create
 Headers:
@@ -148,11 +220,16 @@ Body (raw JSON):
     "content": "Món ăn rất ngon, phục vụ nhanh chóng!"
 }
 ```
-# Lấy tất cả reviews:
+## Lấy tất cả reviews:
+```
 GET http://localhost/RestAPIRestaurant/api/routes/review_routes.php
-#Lấy một review:
+```
+## Lấy một review:
+```
 GET http://localhost/RestAPIRestaurant/api/routes/review_routes.php?id=1
-#Cập nhật review:
+```
+## Cập nhật review:
+```
 PUT http://localhost/RestAPIRestaurant/api/routes/review_routes.php
 Body (raw JSON):
 {
@@ -162,9 +239,12 @@ Body (raw JSON):
     "title": "Updated review",
     "content": "Updated content..."
 }
-#Xóa review:
+```
+## Xóa review:
+```
 DELETE http://localhost/RestAPIRestaurant/api/routes/review_routes.php
 Body (raw JSON):
 {
     "id": 1
 }
+```

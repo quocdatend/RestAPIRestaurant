@@ -115,21 +115,26 @@ class Orders
         return $data;
     }
 
-    // Read an order by ID with user details
     public function readById($orderId)
-    {
-        $query = "SELECT o.id, o.user_id, u.username, u.email, o.total_price, o.num_people, 
-                     o.special_request, o.customer_name, o.order_date, o.order_time
-              FROM " . $this->table_name . " o
+{
+    $query = "SELECT o.id, o.user_id, u.username, u.email, o.total_price, o.num_people, 
+                     o.special_request, o.customer_name, o.order_date, o.order_time 
+              FROM orders o
               JOIN user u ON o.user_id = u.id
-              WHERE o.id = :orderId";
+              WHERE o.id = ?"; // Sửa thành dấu "?"
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":orderId", $orderId, PDO::PARAM_INT);
-        $stmt->execute();
-
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        throw new Exception("Lỗi chuẩn bị truy vấn: " . $this->conn->error);
     }
+
+    $stmt->bind_param("i", $orderId); // Đổi từ bindParam sang bind_param
+    $stmt->execute();
+    
+    $result = $stmt->get_result();
+    return $result->fetch_assoc();
+}
+
     public function changeStatus($orderId, $newStatus)
     {
         $query = "UPDATE " . $this->table_name . " SET status = ? WHERE id = ?";
@@ -171,4 +176,5 @@ class Orders
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+    
 }
