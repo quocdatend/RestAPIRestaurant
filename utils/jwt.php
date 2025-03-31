@@ -27,6 +27,15 @@ class JWTHandler {
         return JWT::encode($payload, self::$secret_key, self::$algo);
     }
 
+    public static function generateTokenForResetPass() {
+        $payload = [
+            "iat" => time(),
+            "exp" => time() + 3600 // Token hết hạn sau 1 giờ
+        ];
+        return JWT::encode($payload, self::$secret_key, self::$algo);
+    }
+
+
     // Xác thực JWT
     public static function verifyToken($token) {
         try {
