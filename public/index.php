@@ -24,6 +24,9 @@ switch ($resource) {
     case 'products':
         require_once '../api/routes/menu_routes.php';
         break;
+    case 'reviews':
+        require_once '../api/routes/review_routes.php';
+        break;
     default:
         echo json_encode(["message" => $resource]);
         break;
