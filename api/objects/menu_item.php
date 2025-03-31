@@ -9,6 +9,7 @@ class MenuItem {
     public $description;
     public $image;
     public $detail;
+    public $category_id;
 
     public function __construct($db) {
         $this->conn = $db;
@@ -16,7 +17,9 @@ class MenuItem {
 
     // Phương thức đọc tất cả món ăn
     public function readAll() {
-        $query = "SELECT * FROM " . $this->table_name;
+        $query = "SELECT mi.*, c.name as category_name 
+                  FROM " . $this->table_name . " mi 
+                  LEFT JOIN categories c ON mi.category_id = c.id";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
@@ -26,7 +29,10 @@ class MenuItem {
     public function read($page = 1, $limit = 10) {
         $offset = ($page - 1) * $limit;
 
-        $query = "SELECT id, name, price, description, image, detail FROM {$this->table_name} ORDER BY id DESC LIMIT ?, ?";
+        $query = "SELECT mi.id, mi.name, mi.price, mi.description, mi.image, mi.detail, mi.category_id, c.name as category_name 
+                  FROM {$this->table_name} mi 
+                  LEFT JOIN categories c ON mi.category_id = c.id 
+                  ORDER BY mi.id DESC LIMIT ?, ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param('ii', $offset, $limit);
         $stmt->execute();
@@ -51,7 +57,10 @@ class MenuItem {
 
     // Đọc một món ăn theo ID
     public function readOne() {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ?";
+        $query = "SELECT mi.*, c.name as category_name 
+                  FROM " . $this->table_name . " mi 
+                  LEFT JOIN categories c ON mi.category_id = c.id 
+                  WHERE mi.id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param('i', $this->id);
         $stmt->execute();
@@ -62,8 +71,8 @@ class MenuItem {
     // Tạo một món ăn mới
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
-                  (name, price, description, image, detail) 
-                  VALUES (?, ?, ?, ?, ?)";
+                  (name, price, description, image, detail, category_id) 
+                  VALUES (?, ?, ?, ?, ?, ?)";
     
         $stmt = $this->conn->prepare($query);
     
@@ -73,9 +82,10 @@ class MenuItem {
         $this->description = htmlspecialchars(strip_tags($this->description));
         $this->image = htmlspecialchars(strip_tags($this->image));
         $this->detail = htmlspecialchars(strip_tags($this->detail));
+        $this->category_id = htmlspecialchars(strip_tags($this->category_id));
     
-        // Bind các giá trị (s = string, d = double)
-        $stmt->bind_param("sdsss", $this->name, $this->price, $this->description, $this->image, $this->detail);
+        // Bind các giá trị (s = string, d = double, i = integer)
+        $stmt->bind_param("sdsssi", $this->name, $this->price, $this->description, $this->image, $this->detail, $this->category_id);
     
         return $stmt->execute() ? true : false;
     }
@@ -87,7 +97,8 @@ class MenuItem {
                       price = ?, 
                       description = ?,
                       image = ?,
-                      detail = ?
+                      detail = ?,
+                      category_id = ?
                   WHERE id = ?";
         
         $stmt = $this->conn->prepare($query);
@@ -98,10 +109,11 @@ class MenuItem {
         $this->description = htmlspecialchars(strip_tags($this->description));
         $this->image = htmlspecialchars(strip_tags($this->image));
         $this->detail = htmlspecialchars(strip_tags($this->detail));
+        $this->category_id = htmlspecialchars(strip_tags($this->category_id));
         $this->id = htmlspecialchars(strip_tags($this->id));
         
         // Bind các giá trị
-        $stmt->bind_param("sdsssi", $this->name, $this->price, $this->description, $this->image, $this->detail, $this->id);
+        $stmt->bind_param("sdsssii", $this->name, $this->price, $this->description, $this->image, $this->detail, $this->category_id, $this->id);
         
         return $stmt->execute() ? true : false;
     }
@@ -121,7 +133,10 @@ class MenuItem {
 
     // Tìm kiếm món ăn theo tên
     public function searchByName($keywords) {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE name LIKE ?";
+        $query = "SELECT mi.*, c.name as category_name 
+                  FROM " . $this->table_name . " mi 
+                  LEFT JOIN categories c ON mi.category_id = c.id 
+                  WHERE mi.name LIKE ?";
         
         $stmt = $this->conn->prepare($query);
         

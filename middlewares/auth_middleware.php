@@ -13,7 +13,7 @@ class AuthMiddleware
         }
 
         $token = str_replace("Bearer ", "", $headers["Authorization"]);
-        $decoded = JWTHandler::verifyToken($token);
+        $decoded = (array) JWTHandler::verifyToken($token);
 
         if (isset($decoded["error"])) {
             http_response_code(401);

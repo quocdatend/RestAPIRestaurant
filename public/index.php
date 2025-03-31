@@ -18,7 +18,7 @@ switch ($resource) {
     case 'users':
         require_once '../api/routes/user_routes.php';
         break;
-    case'order':
+    case 'order':
         require_once '../api/routes/order_route.php';
         break;
     case 'products':

@@ -1,6 +1,6 @@
 <?php
-require_once '../config/database.php';
-require_once '../api/controllers/user_controller.php';
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../api/controllers/user_controller.php';
 
 // Khởi tạo database và controller
 $database = new Database();
@@ -15,8 +15,8 @@ $id = isset($uri_segments[2]) ? $uri_segments[2] : null;
 
 switch ($method) {
     case 'GET':
-        if (isset($id)) {
-            //$user_controller->getUserByUsername($id); // Lấy user theo ID
+        if (isset($uri_segments[2]) && $uri_segments[2] == 'response') {
+            $user_controller->getUser(); // Lấy user theo ID $id
         } else {
             $user_controller->getUsers(); // Lấy danh sách users
         }
@@ -26,6 +26,12 @@ switch ($method) {
         if(isset($uri_segments[2]) && $uri_segments[2] == 'login') {
             $data = json_decode(file_get_contents("php://input"), true);
             $user_controller->login($data);
+        }else if (isset($uri_segments[2]) && $uri_segments[2] == 'forgetPassword') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $user_controller->forgetPassword($data);
+        } if (isset($uri_segments[2]) && $uri_segments[2] == 'resetPassword') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $user_controller->resetPassword($data);
         } else {
             $data = json_decode(file_get_contents("php://input"), true);
             echo json_encode($user_controller->createUser($data)); // Tạo user mới
@@ -36,11 +42,7 @@ switch ($method) {
         if (isset($uri_segments[2]) && $uri_segments[2] == 'update') {
             $data = json_decode(file_get_contents("php://input"), true);
             $user_controller->updateUser($data); // Cập nhật user
-        // } else if (isset($uri_segments[2]) && $uri_segments[2] == 'forgetPassword') {
-        //     $data = json_decode(file_get_contents("php://input"), true);
-        //     $user_controller->forgetPassword($data);
-
-        } else {
+        }  else {
             echo json_encode(["message" => "User ID required"]);
         }
         break;
