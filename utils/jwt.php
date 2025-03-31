@@ -10,19 +10,27 @@ class JWTHandler {
     private static $secret_key;
     private static $algo = 'HS256';
 
-    // Khởi tạo JWTHandler với secret key từ .env hoặc config
     public static function init() {
-        self::$secret_key = getenv("JWT_SECRET") ?: "0bbe045e916673a9c8eab7dcd0dea0112509f466c47121ad86759d9a22d7c7fd"; // Thay thế "your_fallback_secret"
+        self::$secret_key = getenv("JWT_SECRET") ?: "0bbe045e916673a9c8eab7dcd0dea0112509f466c47121ad86759d9a22d7c7fd";
     }
 
-    // Tạo JWT
     public static function generateToken($user_id, $email, $username) {
         $payload = [
             "sub" => $user_id,
             "username" => $username,
             "email" => $email,
             "iat" => time(),
-            "exp" => time() + 3600 // Token hết hạn sau 1 giờ
+            "exp" => time() + 3600
+        ];
+        return JWT::encode($payload, self::$secret_key, self::$algo);
+    }
+
+    public static function generateTokenForAdmin($email, $password) {
+        $payload = [
+            "email" => $email,
+            "password" => $password,
+            "iat" => time(),
+            "exp" => time() + 3600
         ];
         return JWT::encode($payload, self::$secret_key, self::$algo);
     }
@@ -30,13 +38,11 @@ class JWTHandler {
     public static function generateTokenForResetPass() {
         $payload = [
             "iat" => time(),
-            "exp" => time() + 3600 // Token hết hạn sau 1 giờ
+            "exp" => time() + 3600
         ];
         return JWT::encode($payload, self::$secret_key, self::$algo);
     }
 
-
-    // Xác thực JWT
     public static function verifyToken($token) {
         try {
             return JWT::decode($token, new Key(self::$secret_key, self::$algo));
@@ -52,6 +58,5 @@ class JWTHandler {
     }
 }
 
-// Gọi init() để nạp secret key từ môi trường hoặc cấu hình
 JWTHandler::init();
 ?>
