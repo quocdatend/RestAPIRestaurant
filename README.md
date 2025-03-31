@@ -51,7 +51,6 @@ project-restapi/
 ├── composer.json              # Quản lý dependencies
 └── README.md                  # Hướng dẫn sử dụng
 ```
-
 # Hướng dẫn cài đặt 
 - Tải composer từ link --https://getcomposer.org/download/
 - Kiểm tra phiên bản
@@ -201,4 +200,8 @@ Content-Type: application/json
   "password": "abc",
 }
 ```
+## menu
+http://localhost/RestAPIRestaurant/products
 
+## detail
+http://localhost/RestAPIRestaurant/products/101

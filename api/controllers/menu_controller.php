@@ -28,6 +28,8 @@ class MenuController {
                 "description" => $row['description'],
                 "image" => $row['image'],
                 "detail" => $row['detail'],
+                "category_id" => $row['category_id'],
+                "category_name" => $row['category_name'],
             );
             array_push($menu_items_arr, $menu_item);
         }
@@ -49,6 +51,8 @@ class MenuController {
                 "description" => $result['description'],
                 "image" => $result['image'],
                 "detail" => $result['detail'],
+                "category_id" => $result['category_id'],
+                "category_name" => $result['category_name'],
             );
             http_response_code(200);
             echo json_encode($menu_item);
@@ -65,6 +69,7 @@ class MenuController {
         $this->menu_item->description = isset($data['description']) ? $data['description'] : null;
         $this->menu_item->image = isset($data['image']) ? $data['image'] : null;
         $this->menu_item->detail = isset($data['detail']) ? $data['detail'] : null;
+        $this->menu_item->category_id = isset($data['category_id']) ? $data['category_id'] : null;
 
         if ($this->menu_item->create()) {
             http_response_code(201);
@@ -83,6 +88,7 @@ class MenuController {
         $this->menu_item->description = isset($data['description']) ? $data['description'] : null;
         $this->menu_item->image = isset($data['image']) ? $data['image'] : null;
         $this->menu_item->detail = isset($data['detail']) ? $data['detail'] : null;
+        $this->menu_item->category_id = isset($data['category_id']) ? $data['category_id'] : null;
 
         if ($this->menu_item->update()) {
             http_response_code(200);
@@ -121,6 +127,8 @@ class MenuController {
                     "description" => $row['description'],
                     "image" => $row['image'],
                     "detail" => $row['detail'],
+                    "category_id" => $row['category_id'],
+                    "category_name" => $row['category_name'],
                 );
                 array_push($menu_items_arr, $menu_item);
             }
