@@ -20,14 +20,15 @@ switch ($method) {
         $path = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
         $index = array_search('status', $path);
 
-        if ($id) {
-            $orderController->getOrderById((object)["id" => $id]); // Lấy đơn hàng theo ID
-        } elseif ($index !== false && isset($path[$index + 1])) {
-            $status = (int) $path[$index + 1]; // Lấy trạng thái từ URL
-            $orderController->getOrdersByStatus($status); // Lấy đơn hàng theo trạng thái
+        if (isset($id) && is_numeric($id)) {
+            $orderController->getOrderById((int)$id);  // Truyền số nguyên
+        } elseif ($index !== false && isset($path[$index + 1]) && is_numeric($path[$index + 1])) {
+            $status = (int) $path[$index + 1];
+            $orderController->getOrdersByStatus($status);
         } else {
-            $orderController->getOrders(); // Lấy danh sách đơn hàng
+            $orderController->getOrders();
         }
+
         break;
 
     case 'POST':
