@@ -8,11 +8,11 @@
 -- Cấu trúc bảng cho bảng `admin`
 --
 
-
 CREATE TABLE `admin` (
   `id` varchar(17) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(64) NOT NULL,
+  `role` varchar(10) NOT NULL DEFAULT 'ADMIN',
   PRIMARY KEY (`id`)
 );
 
@@ -20,8 +20,9 @@ CREATE TABLE `admin` (
 -- Đang đổ dữ liệu cho bảng `admin`
 --
 
-INSERT INTO `admin` (`id`, `email`, `password`) VALUES
-('aB3dE5fG6hI7jK8', 'adminabc123@gmail.com', 'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7');
+INSERT INTO `admin` (`id`, `email`, `password`, `role`) VALUES
+('aB3dE5fG6hI7jK8', 'adminabc123@gmail.com', 'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7', 'ADMIN');
+
 
 -- --------------------------------------------------------
 
