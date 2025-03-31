@@ -1,45 +1,55 @@
 <?php
 // Include database and object files
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../controllers/ReviewController.php';
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../controllers/Review_Controller.php';
+// Get request method
+$method = $_SERVER['REQUEST_METHOD'];
+// Get review ID from URL if present
+$request_uri = $_SERVER['REQUEST_URI'];
+$path = parse_url($request_uri, PHP_URL_PATH);
+$path_parts = explode('/', trim($path, '/'));
+$id = end($path_parts);
+$is_numeric = is_numeric($id);
 
 // Initialize database connection
 $database = new Database();
 $db = $database->getConnection();
 
-// Initialize review controller
-$reviewController = new ReviewController($db);
-
-// Get request method
-$method = $_SERVER['REQUEST_METHOD'];
-
-// Get the ID from URL
-$request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$uri_parts = explode('/', trim($request_uri, '/'));
-$id = isset($uri_parts[count($uri_parts)-1]) && is_numeric($uri_parts[count($uri_parts)-1]) 
-    ? (int)$uri_parts[count($uri_parts)-1] 
-    : null;
+// Initialize controller
+$controller = new Review_Controller($db);
 
 // Handle different HTTP methods
 switch ($method) {
     case 'GET':
-        if ($id !== null) {
-            $reviewController->readOne($id);
+        if ($is_numeric) {
+            $controller->readOne($id);
         } else {
-            $reviewController->read();
+            $controller->read();
         }
         break;
         
     case 'POST':
-        $reviewController->create();
+        $data = json_decode(file_get_contents("php://input"));
+        $controller->create($data);
         break;
         
     case 'PUT':
-        $reviewController->update();
+        if ($is_numeric) {
+            $data = json_decode(file_get_contents("php://input"));
+            $controller->update($id, $data);
+        } else {
+            http_response_code(400);
+            echo json_encode(array("message" => "Missing review ID"));
+        }
         break;
         
     case 'DELETE':
-        $reviewController->delete();
+        if ($is_numeric) {
+            $controller->delete($id);
+        } else {
+            http_response_code(400);
+            echo json_encode(array("message" => "Missing review ID"));
+        }
         break;
         
     default:

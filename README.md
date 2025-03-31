@@ -134,7 +134,8 @@ DELETE http://localhost/restapirestaurant/order/item/{orderItemId}
 ```
 DELETE http://localhost/restapirestaurant/order/{id}
 ```
-#Tạo đánh giá mới 
+# Tạo đánh giá mới 
+```
 POST http://localhost/RestAPIRestaurant/reviews/create
 Headers:
 - Content-Type: application/json
@@ -146,7 +147,8 @@ Body (raw JSON):
     "title": "Món ăn rất ngon",
     "content": "Món ăn rất ngon, phục vụ nhanh chóng!"
 }
-#Lấy tất cả reviews:
+```
+# Lấy tất cả reviews:
 GET http://localhost/RestAPIRestaurant/api/routes/review_routes.php
 #Lấy một review:
 GET http://localhost/RestAPIRestaurant/api/routes/review_routes.php?id=1

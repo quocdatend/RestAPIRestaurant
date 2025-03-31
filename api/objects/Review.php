@@ -2,7 +2,6 @@
 class Review {
     private $conn;
     private $table_name = "reviews";
-
     // Object properties
     public $id;
     public $customerName;
@@ -10,141 +9,133 @@ class Review {
     public $title;
     public $content;
     public $date;
+    public $average_rating;    // Added for getAverageRating method
+    public $total_reviews;     // Added for getAverageRating method
 
     public function __construct($db) {
         $this->conn = $db;
     }
-
     // Create review
     public function create() {
-        try {
-            $query = "INSERT INTO " . $this->table_name . "
-                    SET
-                        customerName = :customerName,
-                        rating = :rating,
-                        title = :title,
-                        content = :content,
-                        date = NOW()";
-
-            $stmt = $this->conn->prepare($query);
-
-            // Sanitize input
-            $this->customerName = htmlspecialchars(strip_tags($this->customerName));
-            $this->rating = htmlspecialchars(strip_tags($this->rating));
-            $this->title = htmlspecialchars(strip_tags($this->title));
-            $this->content = htmlspecialchars(strip_tags($this->content));
-
-            // Bind values
-            $stmt->bindParam(":customerName", $this->customerName);
-            $stmt->bindParam(":rating", $this->rating);
-            $stmt->bindParam(":title", $this->title);
-            $stmt->bindParam(":content", $this->content);
-
-            if($stmt->execute()) {
-                return true;
-            }
-            return false;
-        } catch(PDOException $e) {
+        // Validate required fields
+        if(empty($this->customerName) || empty($this->rating) || empty($this->title) || empty($this->content)) {
             return false;
         }
+
+        $query = "INSERT INTO " . $this->table_name . " 
+                (customerName, rating, title, content, date) 
+                VALUES 
+                (?, ?, ?, ?, NOW())";
+
+        $stmt = $this->conn->prepare($query);
+
+        // Sanitize input
+        $this->customerName = $this->conn->real_escape_string($this->customerName);
+        $this->rating = (int)$this->rating;
+        $this->title = $this->conn->real_escape_string($this->title);
+        $this->content = $this->conn->real_escape_string($this->content);
+
+        // Bind values
+        $stmt->bind_param("siis", $this->customerName, $this->rating, $this->title, $this->content);
+
+        if($stmt->execute()) {
+            $this->id = $this->conn->insert_id;
+            return true;
+        }
+        return false;
     }
 
     // Read all reviews
     public function read() {
-        try {
-            $query = "SELECT * FROM " . $this->table_name . " ORDER BY date DESC";
-            $stmt = $this->conn->prepare($query);
-            $stmt->execute();
-            return $stmt;
-        } catch(PDOException $e) {
-            return false;
+        $query = "SELECT * FROM " . $this->table_name . " ORDER BY date DESC";
+        $result = $this->conn->query($query);
+        
+        if($result && $result->num_rows > 0) {
+            $reviews = array();
+            while($row = $result->fetch_assoc()) {
+                $reviews[] = $row;
+            }
+            return $reviews;
         }
+        return array();
     }
 
     // Read single review
     public function readOne() {
-        try {
-            $query = "SELECT * FROM " . $this->table_name . " WHERE id = ? LIMIT 0,1";
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(1, $this->id);
-            $stmt->execute();
-            return $stmt;
-        } catch(PDOException $e) {
-            return false;
+        if(empty($this->id)) {
+            return null;
         }
+
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ? LIMIT 0,1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $this->id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if($result && $result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+        return null;
     }
 
     // Update review
     public function update() {
-        try {
-            $query = "UPDATE " . $this->table_name . "
-                    SET
-                        customerName = :customerName,
-                        rating = :rating,
-                        title = :title,
-                        content = :content
-                    WHERE id = :id";
-
-            $stmt = $this->conn->prepare($query);
-
-            // Sanitize input
-            $this->customerName = htmlspecialchars(strip_tags($this->customerName));
-            $this->rating = htmlspecialchars(strip_tags($this->rating));
-            $this->title = htmlspecialchars(strip_tags($this->title));
-            $this->content = htmlspecialchars(strip_tags($this->content));
-            $this->id = htmlspecialchars(strip_tags($this->id));
-
-            // Bind values
-            $stmt->bindParam(":customerName", $this->customerName);
-            $stmt->bindParam(":rating", $this->rating);
-            $stmt->bindParam(":title", $this->title);
-            $stmt->bindParam(":content", $this->content);
-            $stmt->bindParam(":id", $this->id);
-
-            if($stmt->execute()) {
-                return true;
-            }
-            return false;
-        } catch(PDOException $e) {
+        // Validate required fields
+        if(empty($this->id) || empty($this->customerName) || empty($this->rating) || empty($this->title) || empty($this->content)) {
             return false;
         }
+
+        $query = "UPDATE " . $this->table_name . "
+                SET customerName = ?, rating = ?, title = ?, content = ?
+                WHERE id = ?";
+
+        $stmt = $this->conn->prepare($query);
+
+        // Sanitize input
+        $this->customerName = $this->conn->real_escape_string($this->customerName);
+        $this->rating = (int)$this->rating;
+        $this->title = $this->conn->real_escape_string($this->title);
+        $this->content = $this->conn->real_escape_string($this->content);
+        $this->id = (int)$this->id;
+
+        // Bind values
+        $stmt->bind_param("siisi", $this->customerName, $this->rating, $this->title, $this->content, $this->id);
+
+        if($stmt->execute()) {
+            return true;
+        }
+        return false;
     }
 
     // Delete review
     public function delete() {
-        try {
-            $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(1, $this->id);
-
-            if($stmt->execute()) {
-                return true;
-            }
-            return false;
-        } catch(PDOException $e) {
+        if(empty($this->id)) {
             return false;
         }
+
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $this->id);
+
+        if($stmt->execute()) {
+            return true;
+        }
+        return false;
     }
 
     // Get average rating
     public function getAverageRating() {
-        try {
-            $query = "SELECT AVG(rating) as average_rating, COUNT(*) as total_reviews 
-                    FROM " . $this->table_name;
-
-            $stmt = $this->conn->prepare($query);
-            $stmt->execute();
-
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if($row) {
-                $this->average_rating = $row['average_rating'];
-                $this->total_reviews = $row['total_reviews'];
-                return $this;
-            }
-            return false;
-        } catch(PDOException $e) {
-            return false;
+        $query = "SELECT AVG(rating) as average_rating, COUNT(*) as total_reviews 
+                FROM " . $this->table_name;
+        $result = $this->conn->query($query);
+        
+        if($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $this->average_rating = round($row['average_rating'], 1);
+            $this->total_reviews = $row['total_reviews'];
+            return $this;
         }
+        return false;
     }
 
     // Convert to array
