@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../utils/helpers.php';
 class User
 {
     private $conn;
@@ -23,52 +24,6 @@ class User
         return $stmt;
     }
 
-    public function read($page = 1, $limit = 10)
-    {
-        $offset = ($page - 1) * $limit;
-
-        $query = "SELECT id, username, password, email FROM {$this->table_name} ORDER BY id DESC LIMIT ?, ?";
-
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param('ii', $offset, $limit);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-
-        $users = [];
-        while ($row = $result->fetch_assoc()) {
-            $users[] = $row;
-        }
-
-        return $users;
-    }
-
-    public function count()
-    {
-        $query = "SELECT COUNT(*) as total FROM {$this->table_name}";
-        $result = $this->conn->query($query);
-        $row = $result->fetch_assoc();
-
-        return (int)$row['total'];
-    }
-
-    public function readOne()
-    {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $this->id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $users = [];
-        while ($row = $result->fetch_assoc()) {
-            $users[] = $row;
-        }
-        $result->free();
-        $stmt->close();
-
-        return $users;
-    }
-
     public function create($data)
     {
         $query = "INSERT INTO " . $this->table_name . " 
@@ -87,8 +42,8 @@ class User
         $this->password = htmlspecialchars(strip_tags($password));
         $this->email = htmlspecialchars(strip_tags($email));
 
-        $id = $this->generateRandomAlphaNumeric();
-        $hashedPassword = $this->hashPassword($this->password);
+        $id = GenerateRandomAlphaNumeric();
+        $hashedPassword = HashPassword($this->password);
 
         $stmt->bind_param("ssss", $id, $this->username, $hashedPassword, $this->email);
 
@@ -131,7 +86,7 @@ class User
 
         $stmt = $this->conn->prepare($query);
 
-        $hashedPassword = $this->hashPassword($password);
+        $hashedPassword = HashPassword($password);
 
         $stmt->bind_param("ss", $hashedPassword, $username);
 
@@ -143,19 +98,18 @@ class User
         }
     }
 
+    // public function delete()
+    // {
+    //     $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
 
-    public function delete()
-    {
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+    //     $stmt = $this->conn->prepare($query);
 
-        $stmt = $this->conn->prepare($query);
+    //     $this->id = htmlspecialchars(strip_tags($this->id));
 
-        $this->id = htmlspecialchars(strip_tags($this->id));
+    //     $stmt->bindParam(1, $this->id);
 
-        $stmt->bindParam(1, $this->id);
-
-        return $stmt->execute() ? true : false;
-    }
+    //     return $stmt->execute() ? true : false;
+    // }
 
     public function loginByUsername($data)
     {
@@ -168,7 +122,7 @@ class User
         $password = isset($data['password']) ? $data['password'] : '';
         $this->password = htmlspecialchars(strip_tags($password));
         // $keywords = "%{$keywords}%";
-        $hashedPassword = $this->hashPassword($password);
+        $hashedPassword = HashPassword($password);
         $stmt->bind_param("ss", $this->username, $hashedPassword);
 
         $stmt->execute();
@@ -194,7 +148,7 @@ class User
         $password = isset($data['password']) ? $data['password'] : '';
         $this->password = htmlspecialchars(strip_tags($password));
         // $keywords = "%{$keywords}%";
-        $hashedPassword = $this->hashPassword($password);
+        $hashedPassword = HashPassword($password);
         $stmt->bind_param("ss", $this->email, $hashedPassword);
 
         $stmt->execute();
@@ -270,17 +224,5 @@ class User
         $stmt->close();
 
         return $users;
-    }
-
-    // hass pass
-    private function hashPassword($password)
-    {
-        return hash('sha256', $password); // Tạo hash 64 ký tự
-    }
-
-    // random id
-    function generateRandomAlphaNumeric($length = 16)
-    {
-        return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
     }
 }

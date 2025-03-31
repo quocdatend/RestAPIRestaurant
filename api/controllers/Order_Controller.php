@@ -14,7 +14,6 @@ class OrderController
         $this->order = new Orders($this->db);
         $this->orderItem = new OrderItem($this->db); // Khởi tạo OrderItem
     }
-
     public function getOrders()
     {
         try {
@@ -70,18 +69,6 @@ class OrderController
         }
     }
 
-    // Các phương thức khác giữ nguyên
-    public function getOrderById($orderId)
-    {
-        $result = $this->order->readById($orderId);
-        if ($result) {
-            http_response_code(200);
-            echo json_encode($result);
-        } else {
-            http_response_code(404);
-            echo json_encode(["message" => "Đơn hàng không tồn tại."]);
-        }
-    }
     public function createOrder($data)
     {
         try {
@@ -350,4 +337,52 @@ class OrderController
             ]);
         }
     }
+    public function getOrderById($orderId)
+    {
+        try {
+            // Kiểm tra nếu orderId không hợp lệ
+            if (!is_numeric($orderId) || intval($orderId) != $orderId || $orderId <= 0) {
+                http_response_code(400);
+                echo json_encode(["message" => "ID đơn hàng không hợp lệ."]);
+                return;
+            }
+    
+            // Lấy thông tin đơn hàng từ database
+            $order = $this->order->readById($orderId);
+            if (!$order) {
+                http_response_code(404);
+                echo json_encode(["message" => "Đơn hàng không tồn tại."]);
+                return;
+            }
+    
+            // Lấy danh sách các item trong order
+            $query = "SELECT oi.id, oi.order_id, oi.menu_item_id, oi.status 
+                      FROM order_items oi 
+                      WHERE oi.order_id = ?";
+    
+            $stmt = $this->db->prepare($query);
+            if ($stmt === false) {
+                throw new Exception("Lỗi chuẩn bị truy vấn: " . $this->db->error);
+            }
+    
+            $stmt->bind_param("i", $orderId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $orderItems = $result->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+    
+            // Gán danh sách order_items vào order
+            $order['order_items'] = $orderItems ?: [];
+    
+            http_response_code(200);
+            echo json_encode($order);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                "message" => "Lỗi khi lấy dữ liệu đơn hàng.",
+                "error"   => $e->getMessage()
+            ]);
+        }
+    }
+    
 }
