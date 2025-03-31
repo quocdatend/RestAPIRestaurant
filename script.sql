@@ -153,6 +153,20 @@ INSERT INTO `orders` (`id`, `user_id`, `total_price`, `num_people`, `special_req
 (2, 'Wp46dCAo32SNZytl', 89.99, 4, 'No onions', 'Jane Smith', 1, '2025-03-25', '18:45:00'),
 (3, 'Wp46dCAo32SNZytl', 45.50, 2, 'Extra spicy', 'John Doe', 0, '2025-03-27', '05:31:26');
 
+--Table reviews
+CREATE TABLE reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customerName VARCHAR(255) NOT NULL,
+    rating INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    date DATETIME NOT NULL
+);
+INSERT INTO reviews (customerName, rating, title, content, date)
+VALUES 
+ ('Trần Thị B', 4, 'Dịch vụ tốt', 'Mặc dù có một số sự cố nhỏ trong quá trình tổ chức sự kiện, nhưng tổng thể dịch vụ khá tốt và chúng tôi hài lòng.', '2023-12-02 10:00:00'),
+    ('Lê Quang C', 3, 'Cần cải thiện', 'Dịch vụ chưa thực sự như mong đợi. Nhân viên có phần thiếu chuyên nghiệp và có một số thiếu sót trong buổi tiệc.', '2023-12-03 14:30:00'),
+    ('Nguyễn Hoàng D', 5, 'Hoàn hảo', 'Tôi rất ấn tượng với chất lượng dịch vụ tại nhà hàng. Mọi thứ đều rất tuyệt vời từ phục vụ đến món ăn.', '2023-12-04 09:45:00');
 -- --------------------------------------------------------
 -- Cấu trúc bảng `order_items`
 -- --------------------------------------------------------
