@@ -1,8 +1,9 @@
 <?php
-require_once '../api/objects/user.php';
-require_once '../utils/validator.php';
-require_once '../utils/response.php';
+require_once __DIR__ . '/../../api/objects/user.php';
+require_once __DIR__ . '/../../utils/validator.php';
+require_once __DIR__ . '/../../utils/response.php';
 require_once __DIR__ . '/../../middlewares/auth_middleware.php';
+require_once __DIR__ . '/../../middlewares/validate_middleware.php';
 require_once __DIR__ . '/../../utils/jwt.php';
 require_once __DIR__ . '/../../services/email_service.php';
 
@@ -60,6 +61,14 @@ class UserController
     // create
     public function createUser($data)
     {
+        $requiredFields = ['username', 'password', 'password'];
+
+        // Sử dụng validateMiddleware để kiểm tra dữ liệu đầu vào
+        if (!validateMiddleware($data, $requiredFields)) {
+            // Nếu dữ liệu không hợp lệ, kết thúc xử lý
+            return APIResponse::error("Invalid data");
+        }
+
         if (!Validator::validateUsername($data['username'])) {
             APIResponse::error("Username phải có ít nhất 8 ký tự, chứa chữ hoa, chữ thường, số và ký tự đặc biệt.");
             return ["message" => "User created faild"];
@@ -97,6 +106,13 @@ class UserController
 
     public function login($data)
     {
+        $requiredFields = ['password'];
+
+        // Sử dụng validateMiddleware để kiểm tra dữ liệu đầu vào
+        if (!validateMiddleware($data, $requiredFields)) {
+            // Nếu dữ liệu không hợp lệ, kết thúc xử lý
+            return APIResponse::error("Invalid data");
+        }
         // check username
         $stmt = $this->user->searchByUsername($data);
         if (count($stmt) != 0) {
@@ -120,6 +136,13 @@ class UserController
 
     public function updateUser($data)
     {
+        $requiredFields = ['username', 'password'];
+
+        // Sử dụng validateMiddleware để kiểm tra dữ liệu đầu vào
+        if (!validateMiddleware($data, $requiredFields)) {
+            // Nếu dữ liệu không hợp lệ, kết thúc xử lý
+            return APIResponse::error("Invalid data");
+        }
         //check username 
         $stmt = $this->user->searchByUsername($data);
         if (count($stmt) == 0) {
@@ -139,6 +162,13 @@ class UserController
 
     public function forgetPassword($data)
     {
+        $requiredFields = ['username'];
+
+        // Sử dụng validateMiddleware để kiểm tra dữ liệu đầu vào
+        if (!validateMiddleware($data, $requiredFields)) {
+            // Nếu dữ liệu không hợp lệ, kết thúc xử lý
+            return APIResponse::error("Invalid data");
+        }
         $stmt = $this->user->searchByEmail($data);
         if (count($stmt) == 0) {
             return APIResponse::error("Username không tồn tại.");
@@ -161,6 +191,13 @@ class UserController
 
     public function resetPassword($data)
     {
+        $requiredFields = ['username', 'password', 'repassword'];
+
+        // Sử dụng validateMiddleware để kiểm tra dữ liệu đầu vào
+        if (!validateMiddleware($data, $requiredFields)) {
+            // Nếu dữ liệu không hợp lệ, kết thúc xử lý
+            return APIResponse::error("Invalid data");
+        }
         // check token
         $userData = AuthMiddleware::verifyToken();
         if (count((array) $userData) == 0) {
