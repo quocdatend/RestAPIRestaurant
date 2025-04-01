@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../utils/jwt.php';
+require_once __DIR__ . '/../utils/response.php';
 
 class AuthMiddleware
 {
@@ -22,5 +23,26 @@ class AuthMiddleware
         }
 
         return $decoded;
+    }
+
+    public static function checkAdmin() {
+        $headers = getallheaders();
+        if (!isset($headers['Authorization'])) {
+            APIResponse::json(401, "Unauthorized", ["error" => "Token is required"]);
+            exit;
+        }
+
+        $token = str_replace("Bearer ", "", $headers['Authorization']);
+        $decoded = JWTHandler::verifyToken($token);
+
+        if (!$decoded) {
+            APIResponse::json(401, "Unauthorized", ["error" => "Invalid token"]);
+            exit;
+        }
+
+        if (!isset($decoded->role) || $decoded->role !== 'ADMIN') {
+            APIResponse::json(403, "Forbidden", ["error" => "Access denied"]);
+            exit;
+        }
     }
 }

@@ -19,16 +19,18 @@ class JWTHandler {
             "sub" => $user_id,
             "username" => $username,
             "email" => $email,
+            "role" => "USER",
             "iat" => time(),
             "exp" => time() + 3600
         ];
         return JWT::encode($payload, self::$secret_key, self::$algo);
     }
 
-    public static function generateTokenForAdmin($email, $password) {
+    public static function generateTokenForAdmin($email, $password, $role) {
         $payload = [
             "email" => $email,
             "password" => $password,
+            "role" => $role,
             "iat" => time(),
             "exp" => time() + 3600
         ];

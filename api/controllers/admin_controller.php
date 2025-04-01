@@ -34,7 +34,7 @@ class AdminController
         if (count($stmt) == 0) {
             return APIResponse::error("Password incorrect");
         }
-        $token = JWTHandler::generateTokenForAdmin($stmt[0]["email"], $stmt[0]["password"]);
+        $token = JWTHandler::generateTokenForAdmin($stmt[0]["email"], $stmt[0]["password"], $stmt[0]["role"]);
 
         return APIResponse::success($token);
     }
