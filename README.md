@@ -143,55 +143,6 @@ DELETE http://localhost/restapirestaurant/order/item/{orderItemId}
 ```
 DELETE http://localhost/restapirestaurant/order/{id}
 ```
-
-## menu
-http://localhost/RestAPIRestaurant/products
-
-## detail
-http://localhost/RestAPIRestaurant/products/101
-
-## Tạo đánh giá mới 
-```
-POST http://localhost/RestAPIRestaurant/reviews/create
-Headers:
-- Content-Type: application/json
-
-Body (raw JSON):
-{
-    "customerName": "Nguyễn Văn A",
-    "rating": 5,
-    "title": "Món ăn rất ngon",
-    "content": "Món ăn rất ngon, phục vụ nhanh chóng!"
-}
-```
-## Lấy tất cả reviews:
-```
-GET http://localhost/RestAPIRestaurant/api/routes/review_routes.php
-```
-## Lấy một review:
-```
-GET http://localhost/RestAPIRestaurant/api/routes/review_routes.php?id=1
-```
-## Cập nhật review:
-```
-PUT http://localhost/RestAPIRestaurant/api/routes/review_routes.php
-Body (raw JSON):
-{
-    "id": 1,
-    "customerName": "John Doe",
-    "rating": 4,
-    "title": "Updated review",
-    "content": "Updated content..."
-}
-```
-## Xóa review:
-```
-DELETE http://localhost/RestAPIRestaurant/api/routes/review_routes.php
-Body (raw JSON):
-{
-    "id": 1
-}
-```
 ## GET - lấy tất cả users
 ```
 GET http://localhost/restapirestaurant/users
@@ -249,17 +200,51 @@ Content-Type: application/json
   "password": "abc",
 }
 ```
-## GET - get admin
+## menu
+http://localhost/RestAPIRestaurant/products
+
+## detail
+http://localhost/RestAPIRestaurant/products/101
+
+## Tạo đánh giá mới 
 ```
-GET http://localhost/restapirestaurant/admin
-Authurizarition Bearer Token {Token}
-```
-## POST - Login
-```
-POST http://localhost/restapirestaurant/admin/login
-Content-Type: application/json
+POST http://localhost/RestAPIRestaurant/reviews/create
+Headers:
+- Content-Type: application/json
+
+Body (raw JSON):
 {
-  "email":"admin",
-  "password": "abc",
+    "customerName": "Nguyễn Văn A",
+    "rating": 5,
+    "title": "Món ăn rất ngon",
+    "content": "Món ăn rất ngon, phục vụ nhanh chóng!"
+}
+```
+## Lấy tất cả reviews:
+```
+GET http://localhost/RestAPIRestaurant/api/routes/review_routes.php
+```
+## Lấy một review:
+```
+GET http://localhost/RestAPIRestaurant/api/routes/review_routes.php?id=1
+```
+## Cập nhật review:
+```
+PUT http://localhost/RestAPIRestaurant/api/routes/review_routes.php
+Body (raw JSON):
+{
+    "id": 1,
+    "customerName": "John Doe",
+    "rating": 4,
+    "title": "Updated review",
+    "content": "Updated content..."
+}
+```
+## Xóa review:
+```
+DELETE http://localhost/RestAPIRestaurant/api/routes/review_routes.php
+Body (raw JSON):
+{
+    "id": 1
 }
 ```
