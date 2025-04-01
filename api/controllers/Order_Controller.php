@@ -68,81 +68,82 @@ class OrderController
             ]);
         }
     }
-
     public function createOrder()
-{
-    try {
-        // Nhận dữ liệu từ JSON
-        $jsonData = json_decode(file_get_contents("php://input"), true);
-
-        if (!is_array($jsonData) || !isset($jsonData['user_id'])) {
-            throw new Exception("Dữ liệu đầu vào không hợp lệ: user_id là bắt buộc.");
-        }
-
-        // Kiểm tra user_id có tồn tại không
-        $userId = $this->db->real_escape_string($jsonData['user_id']);
-        $userCheckQuery = "SELECT id FROM user WHERE id = ?";
-        $stmt = $this->db->prepare($userCheckQuery);
-        $stmt->bind_param("s", $userId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows === 0) {
-            throw new Exception("User ID không tồn tại: " . $userId);
-        }
-        $stmt->close();
-
-        // Gán giá trị cho order
-        $this->order->userId = $userId;
-        $this->order->totalPrice = (float) ($jsonData['total_price'] ?? 0.00);
-        $this->order->numPeople = (int) ($jsonData['num_people'] ?? 1);
-        $this->order->specialRequest = $jsonData['special_request'] ?? "";
-        $this->order->customerName = $jsonData['customer_name'] ?? "Khách hàng";
-
-        // Kiểm tra order_date và order_time từ JSON nếu có
-        $this->order->orderDate = isset($jsonData['order_date']) ? $jsonData['order_date'] : date("Y-m-d");
-        $this->order->orderTime = isset($jsonData['order_time']) ? $jsonData['order_time'] : date("H:i:s");
-
-        $this->db->begin_transaction();
-
-        if ($this->order->create()) {
-            $orderId = $this->db->insert_id;
-
-            // Kiểm tra key "order_items" thay vì "items"
+    {
+        try {
+            // Nhận dữ liệu từ JSON
+            $jsonData = json_decode(file_get_contents("php://input"), true);
+            if (!is_array($jsonData) || !isset($jsonData['user_id'])) {
+                throw new Exception("Dữ liệu đầu vào không hợp lệ: user_id là bắt buộc.");
+            }
+            // Kiểm tra user_id có tồn tại không
+            $userId = $this->db->real_escape_string($jsonData['user_id']);
+            $userCheckQuery = "SELECT id FROM user WHERE id = ?";
+            $stmt = $this->db->prepare($userCheckQuery);
+            $stmt->bind_param("s", $userId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result->num_rows === 0) {
+                throw new Exception("User ID không tồn tại: " . $userId);
+            }
+            $stmt->close();
+    
+            // Gán giá trị cho order
+            $this->order->userId = $userId;
+            $this->order->totalPrice = (float) ($jsonData['total_price'] ?? 0.00);
+            $this->order->numPeople = (int) ($jsonData['num_people'] ?? 1);
+            $this->order->specialRequest = $jsonData['special_request'] ?? "";
+            $this->order->customerName = $jsonData['customer_name'] ?? "Khách hàng";
+            $this->order->orderDate = $jsonData['order_date'] ?? date("Y-m-d");
+            $this->order->orderTime = $jsonData['order_time'] ?? date("H:i:s");
+    
+            // Bắt đầu transaction
+            $this->db->begin_transaction();
+    
+            // Tạo đơn hàng
+            if (!$this->order->create()) {
+                throw new Exception("Không thể tạo đơn hàng.");
+            }
+    
+            // Lấy ID đơn hàng vừa tạo
+            $orderId = $this->order->id;
+            if (!$orderId) {
+                throw new Exception("Không thể lấy ID của đơn hàng vừa tạo." . gettype($orderId));
+            }
+    
+            // Thêm sản phẩm vào order_items nếu có
             if (!empty($jsonData['order_items']) && is_array($jsonData['order_items'])) {
                 foreach ($jsonData['order_items'] as $item) {
                     if (!isset($item['menu_item_id'])) {
                         throw new Exception("Dữ liệu item không hợp lệ: menu_item_id là bắt buộc.");
                     }
-
                     $this->orderItem->orderId = $orderId;
                     $this->orderItem->menuItemId = (int) $item['menu_item_id'];
                     $this->orderItem->status = $item['status'] ?? 'pending';
-
                     if (!$this->orderItem->create()) {
                         throw new Exception("Không thể tạo order item cho menu_item_id: " . $item['menu_item_id']);
                     }
                 }
             }
-
+    
+            // Commit transaction
             $this->db->commit();
             http_response_code(201);
             echo json_encode([
                 "message" => "Đơn hàng đã được tạo.",
                 "order_id" => $orderId
             ]);
-        } else {
-            throw new Exception("Không thể tạo đơn hàng.");
+    
+        } catch (Exception $e) {
+            $this->db->rollback();
+            http_response_code(503);
+            echo json_encode([
+                "message" => "Không thể tạo đơn hàng.",
+                "error" => $e->getMessage()
+            ]);
         }
-    } catch (Exception $e) {
-        $this->db->rollback();
-        http_response_code(503);
-        echo json_encode([
-            "message" => "Không thể tạo đơn hàng.",
-            "error" => $e->getMessage()
-        ]);
     }
-}
+    
 
 public function updateOrder($orderId, $data)
 {
@@ -354,13 +355,6 @@ public function updateOrder($orderId, $data)
     public function getOrderById($orderId)
     {
         try {
-            if (!is_numeric($orderId) || intval($orderId) != $orderId || $orderId <= 0) {
-                http_response_code(400);
-                echo json_encode(["message" => "ID đơn hàng không hợp lệ."]);
-                return;
-            }
-
-            // Lấy thông tin đơn hàng từ database
             $order = $this->order->readById($orderId);
             if (!$order) {
                 http_response_code(404);
@@ -378,7 +372,7 @@ public function updateOrder($orderId, $data)
                 throw new Exception("Lỗi chuẩn bị truy vấn: " . $this->db->error);
             }
 
-            $stmt->bind_param("i", $orderId);
+            $stmt->bind_param("s", $orderId);
             $stmt->execute();
             $result = $stmt->get_result();
             $orderItems = $result->fetch_all(MYSQLI_ASSOC);

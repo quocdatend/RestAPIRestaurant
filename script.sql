@@ -269,6 +269,7 @@ ALTER TABLE `menu_items`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_menu_items_category` (`category_id`);
 
+
 --
 -- AUTO_INCREMENT cho các bảng đã đổ
 --
