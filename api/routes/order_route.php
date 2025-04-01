@@ -23,12 +23,11 @@ switch ($method) {
         if (isset($id) && is_numeric($id)) {
             $orderController->getOrderById((int)$id);  // Truyền số nguyên
         } elseif ($index !== false && isset($path[$index + 1]) && is_numeric($path[$index + 1])) {
-            $status = (int) $path[$index + 1];
-            $orderController->getOrdersByStatus($status);
+            $status = (int) $path[$index + 1];  // Lấy trạng thái từ URL
+            $orderController->getOrdersByStatus($status);  // Lấy đơn hàng theo trạng thái
         } else {
-            $orderController->getOrders();
+            $orderController->getOrders();  // Nếu không có trạng thái, lấy tất cả đơn hàng
         }
-
         break;
 
     case 'POST':
@@ -42,7 +41,6 @@ switch ($method) {
             $orderController->createOrder($data); // Tạo đơn hàng mới
         }
         break;
-
 
     case 'PUT':
         $data = json_decode(file_get_contents("php://input"), true);
@@ -92,6 +90,7 @@ switch ($method) {
             echo json_encode(["message" => "Order ID or Item ID required"]);
         }
         break;
+
     default:
         echo json_encode(["message" => "Invalid request method"]);
         break;

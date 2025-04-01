@@ -119,7 +119,7 @@ Content-Type: application/json
 PUT http://localhost/restapirestaurant/order/status/{id}
 Content-Type: application/json
 {
-  "newStatus": "confirmed"
+  "newStatus": "1"
 }
 ```
 ## PUT - Cập nhật thông tin đơn hàng
@@ -166,15 +166,15 @@ Body (raw JSON):
 ```
 ## Lấy tất cả reviews:
 ```
-GET http://localhost/RestAPIRestaurant/api/routes/review_routes.php
+GET http://localhost/RestAPIRestaurant/reviews
 ```
 ## Lấy một review:
 ```
-GET http://localhost/RestAPIRestaurant/api/routes/review_routes.php?id=1
+GET http://localhost/RestAPIRestaurant/reviews/1
 ```
 ## Cập nhật review:
 ```
-PUT http://localhost/RestAPIRestaurant/api/routes/review_routes.php
+PUT http://localhost/RestAPIRestaurant/reviews/update
 Body (raw JSON):
 {
     "id": 1,
@@ -186,7 +186,7 @@ Body (raw JSON):
 ```
 ## Xóa review:
 ```
-DELETE http://localhost/RestAPIRestaurant/api/routes/review_routes.php
+DELETE http://localhost/RestAPIRestaurant/reviews/delete
 Body (raw JSON):
 {
     "id": 1
