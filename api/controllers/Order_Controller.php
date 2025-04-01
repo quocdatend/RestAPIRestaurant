@@ -76,7 +76,21 @@ class OrderController
                 throw new Exception("Dữ liệu đầu vào không hợp lệ: user_id là bắt buộc.");
             }
 
-            $this->order->userId = (int) ($data['user_id'] ?? 0);
+            // Kiểm tra user_id có tồn tại trong bảng user không
+            $userId = $this->db->real_escape_string($data['user_id']);
+            $userCheckQuery = "SELECT id FROM user WHERE id = ?";
+            $stmt = $this->db->prepare($userCheckQuery);
+            $stmt->bind_param("s", $userId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows === 0) {
+                throw new Exception("User ID không tồn tại: " . $userId);
+            }
+            $stmt->close();
+
+            // Gán giá trị cho order
+            $this->order->userId = $userId; // Không ép kiểu INT nếu là VARCHAR
             $this->order->totalPrice = (float) ($data['total_price'] ?? 0.00);
             $this->order->numPeople = (int) ($data['num_people'] ?? 1);
             $this->order->specialRequest = $data['special_request'] ?? "";
@@ -89,6 +103,7 @@ class OrderController
             if ($this->order->create()) {
                 $orderId = $this->db->insert_id;
 
+                // Thêm từng item vào bảng order_items
                 if (!empty($data['items']) && is_array($data['items'])) {
                     foreach ($data['items'] as $item) {
                         if (!isset($item['menu_item_id'])) {
@@ -125,13 +140,27 @@ class OrderController
     public function updateOrder($orderId, $data)
     {
         try {
+            // Kiểm tra dữ liệu đầu vào
             if (!is_array($data) || !isset($data['user_id'])) {
                 throw new Exception("Dữ liệu đầu vào không hợp lệ: user_id là bắt buộc.");
             }
 
+            // Lấy user_id và kiểm tra sự tồn tại trong bảng user
+            $userId = $this->db->real_escape_string($data['user_id']);
+            $userCheckQuery = "SELECT id FROM user WHERE id = ?";
+            $stmt = $this->db->prepare($userCheckQuery);
+            $stmt->bind_param("s", $userId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows === 0) {
+                throw new Exception("User ID không tồn tại: " . $userId);
+            }
+            $stmt->close();
+
             // Gán giá trị cho đối tượng order
             $this->order->orderId = (int) $orderId;
-            $this->order->userId = (int) ($data['user_id'] ?? $this->order->userId);
+            $this->order->userId = $userId; // Không ép kiểu INT nếu là VARCHAR
             $this->order->totalPrice = (float) ($data['total_price'] ?? $this->order->totalPrice);
             $this->order->numPeople = (int) ($data['num_people'] ?? $this->order->numPeople);
             $this->order->specialRequest = $data['special_request'] ?? $this->order->specialRequest;
@@ -176,6 +205,7 @@ class OrderController
                     }
                 }
 
+                // Commit transaction
                 $this->db->commit();
                 http_response_code(200);
                 echo json_encode([
@@ -186,6 +216,7 @@ class OrderController
                 throw new Exception("Cập nhật đơn hàng thất bại trong database.");
             }
         } catch (Exception $e) {
+            // Rollback transaction nếu có lỗi
             $this->db->rollback();
             http_response_code(503);
             echo json_encode([
@@ -251,50 +282,55 @@ class OrderController
         }
     }
     public function getOrdersByStatus($status)
-    {
-        try {
-            if (!in_array($status, [0, 1, 2, 3])) {
-                http_response_code(400);
-                echo json_encode(["message" => "Trạng thái không hợp lệ."]);
-                return;
-            }
-            $orders = $this->order->readByStatus($status);
-            if ($orders && !empty($orders)) {
-                $orders_array = [];
-                foreach ($orders as $order) {
-                    if (!isset($order['id'])) {
-                        continue;
-                    }
-                    $query = "SELECT oi.id, oi.order_id, oi.menu_item_id, oi.status 
-                          FROM order_items oi 
-                          WHERE oi.order_id = ?";
-                    $stmt = $this->db->prepare($query);
-                    if ($stmt === false) {
-                        throw new Exception("Lỗi chuẩn bị truy vấn: " . $this->db->error);
-                    }
-                    $stmt->bind_param("i", $order['id']);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $order_items = $result->fetch_all(MYSQLI_ASSOC);
-                    $stmt->close();
-                    $order['order_items'] = $order_items ? $order_items : [];
-                    $orders_array[] = $order;
+{
+    try {
+        if (!in_array($status, [0, 1, 2, 3])) {
+            http_response_code(400);
+            echo json_encode(["message" => "Trạng thái không hợp lệ."]);
+            return;
+        }
+        
+        $orders = $this->order->readByStatus($status);
+        if ($orders && !empty($orders)) {
+            $orders_array = [];
+            foreach ($orders as $order) {
+                // Kiểm tra nếu ID của đơn hàng không hợp lệ
+                if (!isset($order['id']) || !is_numeric($order['id']) || $order['id'] <= 0) {
+                    continue; // Bỏ qua đơn hàng nếu ID không hợp lệ
                 }
 
-                http_response_code(200);
-                echo json_encode($orders_array);
-            } else {
-                http_response_code(404);
-                echo json_encode(["message" => "Không tìm thấy đơn hàng với trạng thái này."]);
+                // Truy vấn các order_items từ bảng order_items
+                $query = "SELECT oi.id, oi.order_id, oi.menu_item_id, oi.status 
+                          FROM order_items oi 
+                          WHERE oi.order_id = ?";
+                $stmt = $this->db->prepare($query);
+                if ($stmt === false) {
+                    throw new Exception("Lỗi chuẩn bị truy vấn: " . $this->db->error);
+                }
+                $stmt->bind_param("i", $order['id']);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $order_items = $result->fetch_all(MYSQLI_ASSOC);
+                $stmt->close();
+                $order['order_items'] = $order_items ? $order_items : [];
+                $orders_array[] = $order;
             }
-        } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode([
-                "message" => "Lỗi khi lấy dữ liệu đơn hàng.",
-                "error"   => $e->getMessage()
-            ]);
+
+            http_response_code(200);
+            echo json_encode($orders_array);
+        } else {
+            http_response_code(404);
+            echo json_encode(["message" => "Không tìm thấy đơn hàng với trạng thái này."]);
         }
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            "message" => "Lỗi khi lấy dữ liệu đơn hàng.",
+            "error"   => $e->getMessage()
+        ]);
     }
+}
+
     public function addOrderItems($orderId, $data)
     {
         try {
@@ -340,13 +376,12 @@ class OrderController
     public function getOrderById($orderId)
     {
         try {
-            // Kiểm tra nếu orderId không hợp lệ
             if (!is_numeric($orderId) || intval($orderId) != $orderId || $orderId <= 0) {
                 http_response_code(400);
                 echo json_encode(["message" => "ID đơn hàng không hợp lệ."]);
                 return;
             }
-    
+
             // Lấy thông tin đơn hàng từ database
             $order = $this->order->readById($orderId);
             if (!$order) {
@@ -354,26 +389,26 @@ class OrderController
                 echo json_encode(["message" => "Đơn hàng không tồn tại."]);
                 return;
             }
-    
+
             // Lấy danh sách các item trong order
             $query = "SELECT oi.id, oi.order_id, oi.menu_item_id, oi.status 
                       FROM order_items oi 
                       WHERE oi.order_id = ?";
-    
+
             $stmt = $this->db->prepare($query);
             if ($stmt === false) {
                 throw new Exception("Lỗi chuẩn bị truy vấn: " . $this->db->error);
             }
-    
+
             $stmt->bind_param("i", $orderId);
             $stmt->execute();
             $result = $stmt->get_result();
             $orderItems = $result->fetch_all(MYSQLI_ASSOC);
             $stmt->close();
-    
+
             // Gán danh sách order_items vào order
             $order['order_items'] = $orderItems ?: [];
-    
+
             http_response_code(200);
             echo json_encode($order);
         } catch (Exception $e) {
@@ -384,5 +419,4 @@ class OrderController
             ]);
         }
     }
-    
 }
