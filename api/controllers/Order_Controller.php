@@ -274,24 +274,36 @@ public function updateOrder($orderId, $data)
         }
     }
     public function updateOrderStatus($orderId, $newStatus)
-    {
-        try {
-            if ($this->order->changeStatus($orderId, $newStatus)) {
-                http_response_code(200);
-                echo json_encode([
-                    "message" => "Trạng thái đơn hàng đã được cập nhật thành công."
-                ]);
-            } else {
-                throw new Exception("Cập nhật trạng thái đơn hàng thất bại.");
-            }
-        } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode([
-                "message" => "Lỗi khi cập nhật trạng thái đơn hàng.",
-                "error"   => $e->getMessage()
-            ]);
+{
+    try {
+        // Get the current status of the order
+        $orderDetails = $this->order->readById($orderId);
+        $currentStatus = $orderDetails['status'];
+        // Check if the current status is 0 (Chờ duyệt)
+        if ($currentStatus !== 0) {
+            throw new Exception("Chỉ có thể cập nhật trạng thái khi trạng thái hiện tại là Chờ duyệt (0).");
         }
+
+        // Update the order status
+        if ($this->order->changeStatus($orderId, $newStatus)) {
+            http_response_code(200);
+            echo json_encode([
+                "message"   => "Trạng thái đơn hàng đã được cập nhật thành công.",
+                "newStatus" => $newStatus
+            ]);
+        } else {
+            throw new Exception("Cập nhật trạng thái đơn hàng thất bại.");
+        }
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            "message" => "Lỗi khi cập nhật trạng thái đơn hàng.",
+            "error"   => $e->getMessage()
+        ]);
     }
+}
+
+
     public function getOrdersByStatus($status)
     {
         
