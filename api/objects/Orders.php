@@ -166,38 +166,5 @@ class Orders
 
         return true;
     }
-
-    // Lấy tất cả đơn hàng theo trạng thái
-    public function readAllByStatus()
-    {
-        $query = "SELECT * FROM " . $this->table_name . " ORDER BY status ASC";
-        $stmt = $this->conn->prepare($query);
-        if (!$stmt) {
-            throw new Exception("Prepare failed: " . $this->conn->error);
-        }
-
-        if (!$stmt->execute()) {
-            throw new Exception("Execute failed: " . $stmt->error);
-        }
-
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
-
-    // Lấy đơn hàng theo trạng thái
-    public function readByStatus($status)
-    {
-        $query = "SELECT id, user_id, total_price, num_people, special_request, customer_name, order_date, order_time
-              FROM orders WHERE status = ?";
-    $stmt = $this->conn->prepare($query);
-    $stmt->bind_param("i", $status);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $orders = $result->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-
-    // Kiểm tra và log các đơn hàng lấy ra
-    error_log(print_r($orders, true));  // Ghi log để kiểm tra dữ liệu trả về
-
-    return $orders;
-    }
+    
 }
