@@ -4,7 +4,7 @@ class Orders
 {
     private $conn;
     private $table_name = "orders";
-
+    public string $id;
     public string $orderId;
     public string $userId; // Chuyển sang kiểu string
     public array $items;
@@ -20,33 +20,39 @@ class Orders
         $this->conn = $db;
     }
 
-    // Tạo đơn hàng
     public function create()
     {
-        $query = "INSERT INTO " . $this->table_name . " (user_id, total_price, num_people, special_request, customer_name, order_date, order_time) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // Truy vấn SQL chèn dữ liệu vào bảng "orders"
+        $query = "INSERT INTO " . $this->table_name . " (id, user_id, total_price, num_people, special_request, customer_name, order_date, order_time) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
+        // Chuẩn bị truy vấn
         $stmt = $this->conn->prepare($query);
         if ($stmt === false) {
             throw new Exception("Prepare failed: " . $this->conn->error);
         }
 
-        // "s" cho user_id (string), "d" cho float, "i" cho int, còn lại là string
+        // Tạo ID ngẫu nhiên cho đơn hàng
+        $randomId = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'), 0, 6);
+        $this->id = $randomId; 
         $stmt->bind_param(
-            "sdissss",
-            $this->userId,
-            $this->totalPrice,
-            $this->numPeople,
-            $this->specialRequest,
-            $this->customerName,
-            $this->orderDate,
-            $this->orderTime
+            "ssdissss",  // Chuỗi định nghĩa kiểu, gồm 9 ký tự
+            $this->id,    // id (string)
+            $this->userId, // user_id (string)
+            $this->totalPrice, // total_price (double)
+            $this->numPeople, // num_people (integer)
+            $this->specialRequest, // special_request (string)
+            $this->customerName, // customer_name (string)
+            $this->orderDate, // order_date (string)
+            $this->orderTime  // order_time (string)
         );
 
+        // Thực thi truy vấn
         if (!$stmt->execute()) {
             throw new Exception("Execute failed: " . $stmt->error);
         }
 
+        // Đóng kết nối
         $stmt->close();
         return true;
     }
