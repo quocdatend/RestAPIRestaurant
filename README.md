@@ -119,7 +119,7 @@ Content-Type: application/json
 PUT http://localhost/restapirestaurant/order/status/{id}
 Content-Type: application/json
 {
-  "newStatus": "confirmed"
+  "newStatus": "1"
 }
 ```
 ## PUT - Cập nhật thông tin đơn hàng
