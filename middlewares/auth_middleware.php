@@ -45,4 +45,24 @@ class AuthMiddleware
             exit;
         }
     }
-}
+
+    public static function checkUser() {
+        $headers = getallheaders();
+        if (!isset($headers['Authorization'])) {
+            APIResponse::json(401, "Unauthorized", ["error" => "Token is required"]);
+        }
+
+        $token = str_replace("Bearer ", "", $headers['Authorization']);
+        $decoded = JWTHandler::verifyToken($token);
+
+        if (!$decoded) {
+            APIResponse::json(401, "Unauthorized", ["error" => "Invalid token"]);
+        }
+
+        // Nếu không có role hoặc role không phải "user" hoặc "admin", từ chối truy cập
+        if (!isset($decoded->role) || !in_array($decoded->role, ['user', 'admin'])) {
+            APIResponse::json(403, "Forbidden", ["error" => "Access denied"]);
+        }
+
+        return $decoded; // Trả về thông tin người dùng
+    }}

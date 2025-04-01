@@ -14,6 +14,7 @@ $id = isset($uri_segments[2]) ? $uri_segments[2] : null;
 switch ($method) {
     case 'GET':
         if (isset($uri_segments[2]) && $uri_segments[2] == 'response') {
+            AuthMiddleware::checkUser();
             $user_controller->getUser(); 
         } else if(isset($uri_segments[3])) {
             echo json_encode(["message" => "Invalid request method"]);
@@ -21,7 +22,7 @@ switch ($method) {
             $user_controller->getUsers(); 
         }
         break;
-
+ 
     case 'POST':
         if(isset($uri_segments[3])) {
             echo json_encode(["message" => "Invalid request method"]);
@@ -47,6 +48,7 @@ switch ($method) {
             echo json_encode(["message" => "Invalid request method"]);
         } else
         if (isset($uri_segments[2]) && $uri_segments[2] == 'update') {
+            AuthMiddleware::checkUser();
             $data = json_decode(file_get_contents("php://input"), true);
             $user_controller->updateUser($data); // Cập nhật user
         }  else {
