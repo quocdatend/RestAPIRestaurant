@@ -143,13 +143,14 @@ DELETE http://localhost/restapirestaurant/order/item/{orderItemId}
 ```
 DELETE http://localhost/restapirestaurant/order/{id}
 ```
-
-## menu
+## Menu
+```
 http://localhost/RestAPIRestaurant/products
-
-## detail
+```
+## Detail
+```
 http://localhost/RestAPIRestaurant/products/101
-
+```
 ## Tạo đánh giá mới 
 ```
 POST http://localhost/RestAPIRestaurant/reviews/create
