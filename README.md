@@ -143,7 +143,6 @@ DELETE http://localhost/restapirestaurant/order/item/{orderItemId}
 ```
 DELETE http://localhost/restapirestaurant/order/{id}
 ```
-
 ## menu
 http://localhost/RestAPIRestaurant/products
 
