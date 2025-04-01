@@ -5,7 +5,7 @@ class OrderItem {
     private $table_name = "order_items";
 
     public int $id;
-    public int $orderId;
+    public string $orderId;
     public int $menuItemId;
     public string $status;
 
@@ -15,23 +15,23 @@ class OrderItem {
 
     
     public function create() {
-    $query = "INSERT INTO " . $this->table_name . " (order_id, menu_item_id, status) VALUES (?, ?, ?)";
-    $stmt = $this->conn->prepare($query);
-    
-    if ($stmt === false) {
-        throw new Exception("Prepare failed: " . $this->conn->error);
+        $query = "INSERT INTO " . $this->table_name . " (order_id, menu_item_id, status) VALUES (?, ?, ?)";
+        $stmt = $this->conn->prepare($query);
+        
+        if ($stmt === false) {
+            throw new Exception("Prepare failed: " . $this->conn->error);
+        }
+        
+        $stmt->bind_param("sis", $this->orderId, $this->menuItemId, $this->status);
+        $result = $stmt->execute();
+        
+        if ($result === false) {
+            throw new Exception("Execute failed: " . $stmt->error);
+        }
+        
+        $stmt->close();
+        return $result;
     }
-    
-    $stmt->bind_param("iis", $this->orderId, $this->menuItemId, $this->status);
-    $result = $stmt->execute();
-    
-    if ($result === false) {
-        throw new Exception("Execute failed: " . $stmt->error);
-    }
-    
-    $stmt->close();
-    return $result;
-}
     // Read all order items
     public function read() {
         $query = "SELECT * FROM " . $this->table_name;
@@ -53,7 +53,7 @@ class OrderItem {
             error_log("Prepare failed: " . $this->conn->error);
             return false;
         }
-        $stmt->bind_param("i", $orderId);
+        $stmt->bind_param("s", $orderId);
         $result = $stmt->execute();
         $stmt->close();
         return $result;
@@ -68,7 +68,7 @@ class OrderItem {
             return false;
         }
     
-        $stmt->bind_param("isii", $this->menuItemId, $this->status, $this->id, $this->orderId);
+        $stmt->bind_param("isis", $this->menuItemId, $this->status, $this->id, $this->orderId);
         $result = $stmt->execute();
         $stmt->close();
         return $result;

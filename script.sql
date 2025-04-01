@@ -135,7 +135,7 @@ INSERT INTO `menu_items` (`id`, `name`, `price`, `description`, `image`, `detail
 -- Cấu trúc bảng `orders`
 -- --------------------------------------------------------
 CREATE TABLE `orders` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `id` VARCHAR(6)  NOT NULL,
   `user_id` VARCHAR(17) NOT NULL,
   `total_price` DECIMAL(10,2) NOT NULL,
   `num_people` INT(11) NOT NULL,
@@ -149,9 +149,9 @@ CREATE TABLE `orders` (
 );
 
 INSERT INTO `orders` (`id`, `user_id`, `total_price`, `num_people`, `special_request`, `customer_name`, `status`, `order_date`, `order_time`) VALUES
-(1, 'Wp46dCAo32SNZytl', 45.50, 2, 'Extra spicy', 'John Doe', 0, '2025-03-26', '12:30:00'),
-(2, 'Wp46dCAo32SNZytl', 89.99, 4, 'No onions', 'Jane Smith', 1, '2025-03-25', '18:45:00'),
-(3, 'Wp46dCAo32SNZytl', 45.50, 2, 'Extra spicy', 'John Doe', 0, '2025-03-27', '05:31:26');
+('123456', 'Wp46dCAo32SNZytl', 45.50, 2, 'Extra spicy', 'John Doe', 0, '2025-03-26', '12:30:00'),
+('789012', 'Wp46dCAo32SNZytl', 89.99, 4, 'No onions', 'Jane Smith', 1, '2025-03-25', '18:45:00'),
+('345678', 'Wp46dCAo32SNZytl', 45.50, 2, 'Extra spicy', 'John Doe', 0, '2025-03-27', '05:31:26');
 
 --Table reviews
 CREATE TABLE reviews (
@@ -172,7 +172,7 @@ VALUES
 -- --------------------------------------------------------
 CREATE TABLE `order_items` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `order_id` INT(11) NOT NULL,
+  `order_id` VARCHAR(6) NOT NULL,
   `menu_item_id` INT(11) NOT NULL,
   `status` VARCHAR(50) NOT NULL DEFAULT 'pending',
   PRIMARY KEY (`id`),
