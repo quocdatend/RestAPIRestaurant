@@ -143,6 +143,56 @@ DELETE http://localhost/restapirestaurant/order/item/{orderItemId}
 ```
 DELETE http://localhost/restapirestaurant/order/{id}
 ```
+## Menu
+```
+http://localhost/RestAPIRestaurant/products
+```
+## Detail
+```
+http://localhost/RestAPIRestaurant/products/101
+```
+## Tạo đánh giá mới 
+```
+POST http://localhost/RestAPIRestaurant/reviews/create
+Headers:
+- Content-Type: application/json
+
+Body (raw JSON):
+{
+    "customerName": "Nguyễn Văn A",
+    "rating": 5,
+    "title": "Món ăn rất ngon",
+    "content": "Món ăn rất ngon, phục vụ nhanh chóng!"
+}
+```
+## Lấy tất cả reviews:
+```
+GET http://localhost/RestAPIRestaurant/reviews
+```
+## Lấy một review:
+```
+GET http://localhost/RestAPIRestaurant/reviews/1
+```
+## Cập nhật review:
+```
+PUT http://localhost/RestAPIRestaurant/reviews/update
+Body (raw JSON):
+{
+    "id": 1,
+    "customerName": "John Doe",
+    "rating": 4,
+    "title": "Updated review",
+    "content": "Updated content..."
+}
+```
+## Xóa review:
+```
+DELETE http://localhost/RestAPIRestaurant/reviews/delete
+Body (raw JSON):
+{
+    "id": 1
+}
+```
 ## GET - lấy tất cả users
 ```
 GET http://localhost/restapirestaurant/users
