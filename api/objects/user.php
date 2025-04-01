@@ -15,7 +15,6 @@ class User
         $this->conn = $db;
     }
 
-    // Phương thức đọc tất cả sản phẩm
     public function readAll()
     {
         $query = "SELECT * FROM " . $this->table_name;
@@ -32,12 +31,10 @@ class User
 
         $stmt = $this->conn->prepare($query);
 
-        // Assign values to temporary variables
         $username = isset($data['username']) ? $data['username'] : '';
         $password = isset($data['password']) ? $data['password'] : '';
         $email = isset($data['email']) ? $data['email'] : '';
 
-        // Clean data
         $this->username = htmlspecialchars(strip_tags($username));
         $this->password = htmlspecialchars(strip_tags($password));
         $this->email = htmlspecialchars(strip_tags($email));
@@ -52,11 +49,9 @@ class User
 
     public function updateEmail($data)
     {
-        // Lấy dữ liệu từ $data
         $username = isset($data['username']) ? $data['username'] : '';
         $email = isset($data['email']) ? $data['email'] : '';
 
-        // Làm sạch dữ liệu
         $username = htmlspecialchars(strip_tags($username));
         $email = htmlspecialchars(strip_tags($email));
         $query = "UPDATE " . $this->table_name . " SET email = ? WHERE username = ?";
@@ -65,21 +60,18 @@ class User
 
         $stmt->bind_param("ss", $email, $username);
 
-        // Thực thi truy vấn
         if ($stmt->execute()) {
-            return $stmt->affected_rows > 0; // Trả về true nếu có dòng bị ảnh hưởng
+            return $stmt->affected_rows > 0;
         } else {
-            return false; // Trả về false nếu thất bại
+            return false;
         }
     }
 
     public function updatePassword($data)
     {
-        // Lấy dữ liệu từ $data
         $username = isset($data['username']) ? $data['username'] : '';
         $password = isset($data['password']) ? $data['password'] : '';
 
-        // Làm sạch dữ liệu
         $username = htmlspecialchars(strip_tags($username));
         $password = htmlspecialchars(strip_tags($password));
         $query = "UPDATE " . $this->table_name . " SET password = ? WHERE username = ?";
@@ -90,26 +82,12 @@ class User
 
         $stmt->bind_param("ss", $hashedPassword, $username);
 
-        // Thực thi truy vấn
         if ($stmt->execute()) {
-            return $stmt->affected_rows > 0; // Trả về true nếu có dòng bị ảnh hưởng
+            return $stmt->affected_rows > 0;
         } else {
-            return false; // Trả về false nếu thất bại
+            return false;
         }
     }
-
-    // public function delete()
-    // {
-    //     $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
-
-    //     $stmt = $this->conn->prepare($query);
-
-    //     $this->id = htmlspecialchars(strip_tags($this->id));
-
-    //     $stmt->bindParam(1, $this->id);
-
-    //     return $stmt->execute() ? true : false;
-    // }
 
     public function loginByUsername($data)
     {
@@ -121,7 +99,6 @@ class User
         $this->username = htmlspecialchars(strip_tags($username));
         $password = isset($data['password']) ? $data['password'] : '';
         $this->password = htmlspecialchars(strip_tags($password));
-        // $keywords = "%{$keywords}%";
         $hashedPassword = HashPassword($password);
         $stmt->bind_param("ss", $this->username, $hashedPassword);
 
@@ -147,7 +124,6 @@ class User
         $this->email = htmlspecialchars(strip_tags($email));
         $password = isset($data['password']) ? $data['password'] : '';
         $this->password = htmlspecialchars(strip_tags($password));
-        // $keywords = "%{$keywords}%";
         $hashedPassword = HashPassword($password);
         $stmt->bind_param("ss", $this->email, $hashedPassword);
 
@@ -172,7 +148,6 @@ class User
 
         $username = isset($data['username']) ? $data['username'] : '';
         $this->username = htmlspecialchars(strip_tags($username));
-        // $keywords = "%{$keywords}%";
         $stmt->bind_param("s", $this->username);
 
         $stmt->execute();
