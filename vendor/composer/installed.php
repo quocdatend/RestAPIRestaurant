@@ -1,6 +1,7 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
+
         'pretty_version' => 'dev-phuc',
         'version' => 'dev-phuc',
         'reference' => '2b40c7de2668462dbe425e587ae4835f0ad9d2a9',
