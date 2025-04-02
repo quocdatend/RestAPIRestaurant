@@ -10,6 +10,7 @@ class MenuItem {
     public $image;
     public $detail;
     public $category_id;
+    public $status;
 
     public function __construct($db) {
         $this->conn = $db;
@@ -29,7 +30,7 @@ class MenuItem {
     public function read($page = 1, $limit = 10) {
         $offset = ($page - 1) * $limit;
 
-        $query = "SELECT mi.id, mi.name, mi.price, mi.description, mi.image, mi.detail, mi.category_id, c.name as category_name 
+        $query = "SELECT mi.id, mi.name, mi.price, mi.description, mi.image, mi.detail, mi.category_id, mi.status, c.name as category_name 
                   FROM {$this->table_name} mi 
                   LEFT JOIN categories c ON mi.category_id = c.id 
                   ORDER BY mi.id DESC LIMIT ?, ?";
@@ -68,11 +69,23 @@ class MenuItem {
         return $result->fetch_assoc();
     }
 
+    // Kiểm tra trạng thái món ăn theo ID
+    public function checkStatus() {
+        $query = "SELECT id, name, status 
+                  FROM " . $this->table_name . " 
+                  WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param('i', $this->id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
     // Tạo một món ăn mới
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
-                  (name, price, description, image, detail, category_id) 
-                  VALUES (?, ?, ?, ?, ?, ?)";
+                  (name, price, description, image, detail, category_id, status) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?)";
     
         $stmt = $this->conn->prepare($query);
     
@@ -83,9 +96,10 @@ class MenuItem {
         $this->image = htmlspecialchars(strip_tags($this->image));
         $this->detail = htmlspecialchars(strip_tags($this->detail));
         $this->category_id = htmlspecialchars(strip_tags($this->category_id));
+        $this->status = (bool)$this->status; // Đảm bảo status là boolean
     
         // Bind các giá trị (s = string, d = double, i = integer)
-        $stmt->bind_param("sdsssi", $this->name, $this->price, $this->description, $this->image, $this->detail, $this->category_id);
+        $stmt->bind_param("sdsssii", $this->name, $this->price, $this->description, $this->image, $this->detail, $this->category_id, $this->status);
     
         return $stmt->execute() ? true : false;
     }
@@ -98,7 +112,8 @@ class MenuItem {
                       description = ?,
                       image = ?,
                       detail = ?,
-                      category_id = ?
+                      category_id = ?,
+                      status = ?
                   WHERE id = ?";
         
         $stmt = $this->conn->prepare($query);
@@ -110,10 +125,11 @@ class MenuItem {
         $this->image = htmlspecialchars(strip_tags($this->image));
         $this->detail = htmlspecialchars(strip_tags($this->detail));
         $this->category_id = htmlspecialchars(strip_tags($this->category_id));
+        $this->status = (bool)$this->status;
         $this->id = htmlspecialchars(strip_tags($this->id));
         
         // Bind các giá trị
-        $stmt->bind_param("sdsssii", $this->name, $this->price, $this->description, $this->image, $this->detail, $this->category_id, $this->id);
+        $stmt->bind_param("sdsssiii", $this->name, $this->price, $this->description, $this->image, $this->detail, $this->category_id, $this->status, $this->id);
         
         return $stmt->execute() ? true : false;
     }
