@@ -30,6 +30,7 @@ class MenuController {
                 "detail" => $row['detail'],
                 "category_id" => $row['category_id'],
                 "category_name" => $row['category_name'],
+                "status" => (bool)$row['status'],
             );
             array_push($menu_items_arr, $menu_item);
         }
@@ -53,6 +54,27 @@ class MenuController {
                 "detail" => $result['detail'],
                 "category_id" => $result['category_id'],
                 "category_name" => $result['category_name'],
+                "status" => (bool)$result['status'],
+            );
+            http_response_code(200);
+            echo json_encode($menu_item);
+        } else {
+            http_response_code(404);
+            echo json_encode(array("message" => "Không tìm thấy món ăn."));
+        }
+    }
+
+    // Kiểm tra trạng thái món ăn theo ID
+    public function checkMenuItemStatus($id) {
+        $this->menu_item->id = $id;
+        $result = $this->menu_item->checkStatus();
+
+        if ($result) {
+            $menu_item = array(
+                "id" => $result['id'],
+                "name" => $result['name'],
+                "status" => (bool)$result['status'],
+                "message" => (bool)$result['status'] ? "Món ăn còn hàng." : "Món ăn đã hết."
             );
             http_response_code(200);
             echo json_encode($menu_item);
@@ -70,6 +92,7 @@ class MenuController {
         $this->menu_item->image = isset($data['image']) ? $data['image'] : null;
         $this->menu_item->detail = isset($data['detail']) ? $data['detail'] : null;
         $this->menu_item->category_id = isset($data['category_id']) ? $data['category_id'] : null;
+        $this->menu_item->status = isset($data['status']) ? $data['status'] : true;
 
         if ($this->menu_item->create()) {
             http_response_code(201);
@@ -89,6 +112,7 @@ class MenuController {
         $this->menu_item->image = isset($data['image']) ? $data['image'] : null;
         $this->menu_item->detail = isset($data['detail']) ? $data['detail'] : null;
         $this->menu_item->category_id = isset($data['category_id']) ? $data['category_id'] : null;
+        $this->menu_item->status = isset($data['status']) ? $data['status'] : true;
 
         if ($this->menu_item->update()) {
             http_response_code(200);
@@ -129,6 +153,7 @@ class MenuController {
                     "detail" => $row['detail'],
                     "category_id" => $row['category_id'],
                     "category_name" => $row['category_name'],
+                    "status" => (bool)$row['status'],
                 );
                 array_push($menu_items_arr, $menu_item);
             }
