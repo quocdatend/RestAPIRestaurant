@@ -16,7 +16,11 @@ $id = isset($uri_segments[2]) ? intval($uri_segments[2]) : null;
 switch ($method) {
     case 'GET':
         if ($id) {
-            $menu_controller->getMenuItemById($id); // Lấy món ăn theo ID
+            if (isset($uri_segments[3]) && $uri_segments[3] === 'status') {
+                $menu_controller->checkMenuItemStatus($id); // Kiểm tra trạng thái món ăn
+            } else {
+                $menu_controller->getMenuItemById($id); // Lấy món ăn theo ID
+            }
         } elseif (isset($uri_segments[2]) && $uri_segments[2] === 'search') {
             $data = json_decode(file_get_contents("php://input"), true);
             $menu_controller->getMenuItemByName($data); // Tìm kiếm món ăn theo tên
