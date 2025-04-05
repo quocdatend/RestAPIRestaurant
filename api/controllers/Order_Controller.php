@@ -94,9 +94,9 @@ class OrderController
             $this->order->customerName = $jsonData['customer_name'] ?? "Khách hàng";
             $this->order->orderDate = $jsonData['order_date'] ?? date("Y-m-d");
             $this->order->orderTime = $jsonData['order_time'] ?? date("H:i:s");
-            $this->order->style_tiec = $jsonData['style_tiec'] ?? "Đặt bàn thường";
-
-    
+            $this->order->style_tiec = $jsonData['style_tiec'] ?? "Đặt bàn th   ường";
+            $this->order->phone_number = $jsonData['phone_number'] ?? "";
+            
             // Bắt đầu transaction
             $this->db->begin_transaction();
     
@@ -157,7 +157,6 @@ public function updateOrder($orderId, $data)
             throw new Exception("Dữ liệu đầu vào không hợp lệ: user_id là bắt buộc.");
         }
 
-        // Lấy user_id và kiểm tra sự tồn tại
         $userId = $this->db->real_escape_string($data['user_id']);
         $stmt = $this->db->prepare("SELECT id FROM user WHERE id = ?");
         $stmt->bind_param("s", $userId);
@@ -176,7 +175,8 @@ public function updateOrder($orderId, $data)
         $this->order->numPeople = isset($data['num_people']) ? (int) $data['num_people'] : $this->order->numPeople;
         $this->order->specialRequest = $data['special_request'] ?? $this->order->specialRequest;
         $this->order->customerName = $data['customer_name'] ?? $this->order->customerName;
-
+        $this->order->style_tiec = $data['style_tiec'] ?? null;
+        $this->order->phone_number = $data['phone_number'] ?? null;
         // Bắt đầu transaction
         $this->db->begin_transaction();
 
@@ -236,8 +236,6 @@ public function updateOrder($orderId, $data)
         ]);
     }
 }
-
-
     public function deleteOrder($orderId)
     {
         if (is_object($orderId) && isset($orderId->orderId)) {
@@ -245,7 +243,6 @@ public function updateOrder($orderId, $data)
         } else {
             $orderIdValue = $orderId;
         }
-
         if (!is_numeric($orderIdValue)) {
             http_response_code(400);
             echo json_encode(["message" => "ID đơn hàng không hợp lệ."]);
