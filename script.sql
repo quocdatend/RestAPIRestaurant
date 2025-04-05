@@ -24,41 +24,35 @@ INSERT INTO `admin` (`id`, `email`, `password`, `role`) VALUES
 ('aB3dE5fG6hI7jK8', 'adminabc123@gmail.com', 'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7', 'ADMIN');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `orders`
---
-
 CREATE TABLE `orders` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `id` varchar(6) NOT NULL,
+  `user_id` varchar(17) NOT NULL,
   `total_price` decimal(10,2) NOT NULL,
   `num_people` int(11) NOT NULL,
   `special_request` text DEFAULT NULL,
   `customer_name` varchar(255) NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT 0,
   `order_date` date NOT NULL,
-  `order_time` time NOT NULL
+  `order_time` time NOT NULL,
+  `style_tiec` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`id`, `user_id`, `total_price`, `num_people`, `special_request`, `customer_name`, `status`, `order_date`, `order_time`) VALUES
-(1, 7, 45.50, 2, 'Extra spicy', 'John Doe', 0, '2025-03-26', '12:30:00'),
-(2, 7, 89.99, 4, 'No onions', 'Jane Smith', 1, '2025-03-25', '18:45:00'),
-(3, 7, 45.50, 2, 'Extra spicy', 'John Doe', 0, '2025-03-27', '05:31:26');
+INSERT INTO `orders` (`id`, `user_id`, `total_price`, `num_people`, `special_request`, `customer_name`, `status`, `order_date`, `order_time`, `style_tiec`) VALUES
+('123456', 'Wp46dCAo32SNZytl', 45.50, 2, 'Extra spicy', 'John Doe', 0, '2025-03-26', '12:30:00', 'ad'),
+('345678', 'Wp46dCAo32SNZytl', 45.50, 2, 'Extra spicy', 'John Doe', 0, '2025-03-27', '05:31:26', 'asd'),
+('789012', 'Wp46dCAo32SNZytl', 89.99, 4, 'No onions', 'Jane Smith', 1, '2025-03-25', '18:45:00', 'asdsa'),
+('euxLRn', 'Wp46dCAo32SNZytl', 89.99, 4, 'No onions', 'Jane Smith', 0, '2025-03-25', '18:45:00', 'asd'),
+('I06LB5', 'Wp46dCAo32SNZytl', 89.99, 4, 'No onions', 'Jane Smith', 0, '2025-03-25', '18:45:00', '567'),
+('uBeKQU', 'Wp46dCAo32SNZytl', 89.99, 4, 'No onions', 'Jane Smith', 0, '2025-03-25', '18:45:00', 'sfs');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `order_items`
---
-
 CREATE TABLE `order_items` (
   `id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
+  `order_id` varchar(6) NOT NULL,
   `menu_item_id` int(11) NOT NULL,
   `status` varchar(50) NOT NULL DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -68,9 +62,15 @@ CREATE TABLE `order_items` (
 --
 
 INSERT INTO `order_items` (`id`, `order_id`, `menu_item_id`, `status`) VALUES
-(5, 3, 101, 'pending'),
-(6, 2, 101, 'pending'),
-(7, 2, 102, 'confirmed');
+(1, '123456', 101, 'pending'),
+(11, 'I06LB5', 101, 'nốnad'),
+(12, 'I06LB5', 102, 'ádsda'),
+(13, 'uBeKQU', 101, 'pending'),
+(14, 'uBeKQU', 102, 'confirmed'),
+(15, 'euxLRn', 101, 'nốnad'),
+(16, 'euxLRn', 102, 'ádsda'),
+(17, 'euxLRn', 101, 'pending'),
+(18, 'euxLRn', 102, 'confirmed');
 
 -- --------------------------------------------------------
 

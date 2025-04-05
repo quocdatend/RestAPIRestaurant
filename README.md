@@ -260,7 +260,7 @@ Authurizarition Bearer Token {Token}
 POST http://localhost/restapirestaurant/admin/login
 Content-Type: application/json
 {
-  "email":"admin",
-  "password": "abc",
+    "email":"adminabc123@gmail.com",
+    "password":"Admin@123"
 }
 ```
