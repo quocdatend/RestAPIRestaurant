@@ -87,8 +87,6 @@ class OrderController
                 throw new Exception("User ID không tồn tại: " . $userId);
             }
             $stmt->close();
-    
-            // Gán giá trị cho order
             $this->order->userId = $userId;
             $this->order->totalPrice = (float) ($jsonData['total_price'] ?? 0.00);
             $this->order->numPeople = (int) ($jsonData['num_people'] ?? 1);
@@ -96,6 +94,8 @@ class OrderController
             $this->order->customerName = $jsonData['customer_name'] ?? "Khách hàng";
             $this->order->orderDate = $jsonData['order_date'] ?? date("Y-m-d");
             $this->order->orderTime = $jsonData['order_time'] ?? date("H:i:s");
+            $this->order->style_tiec = $jsonData['style_tiec'] ?? "Đặt bàn thường";
+
     
             // Bắt đầu transaction
             $this->db->begin_transaction();
@@ -170,7 +170,7 @@ public function updateOrder($orderId, $data)
         $stmt->close();
 
         // Gán giá trị cho đối tượng order
-        $this->order->orderId = (int) $orderId;
+        $this->order->id = (int) $orderId;
         $this->order->userId = $userId;
         $this->order->totalPrice = isset($data['total_price']) ? (float) $data['total_price'] : $this->order->totalPrice;
         $this->order->numPeople = isset($data['num_people']) ? (int) $data['num_people'] : $this->order->numPeople;
@@ -251,7 +251,7 @@ public function updateOrder($orderId, $data)
             echo json_encode(["message" => "ID đơn hàng không hợp lệ."]);
             return;
         }
-        $this->order->orderId = (int) $orderIdValue;
+        $this->order->id = (int) $orderIdValue;
         if ($this->order->delete()) {
             http_response_code(200);
             echo json_encode(["message" => "Đơn hàng đã được xoá."]);

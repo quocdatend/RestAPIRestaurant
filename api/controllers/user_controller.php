@@ -86,7 +86,10 @@ class UserController
 
         if ($this->user->create($data)) {
             http_response_code(201);
-            echo json_encode("Người dùng được tạo thành công.");
+            echo json_encode([
+                'status' => 'success',
+                'message' => "Người dùng được tạo thành công."
+            ]);
         } else {
             http_response_code(503);
             echo json_encode("Không thể tạo tài khoản.");
