@@ -14,6 +14,7 @@ class Orders
     public string $orderDate;
     public string $orderTime;
     public string $style_tiec;
+    public string $phone_number;
     public function __construct($db)
     {
         $this->conn = $db;
@@ -22,8 +23,8 @@ class Orders
     public function create()
     {
         // Truy vấn SQL chèn dữ liệu vào bảng "orders"
-        $query = "INSERT INTO " . $this->table_name . " (id, user_id, total_price, num_people, special_request, customer_name, order_date, order_time,style_tiec) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
+        $query = "INSERT INTO " . $this->table_name . " (id, user_id, total_price, num_people, special_request, customer_name, order_date, order_time,style_tiec,phone_number) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? ,?)";
 
         // Chuẩn bị truy vấn
         $stmt = $this->conn->prepare($query);
@@ -33,7 +34,7 @@ class Orders
         $randomId = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'), 0, 6);
         $this->id = $randomId; 
         $stmt->bind_param(
-            "ssdisssss",  // Chuỗi định nghĩa kiểu, gồm 9 ký tự
+            "ssdissssss",  // Chuỗi định nghĩa kiểu, gồm 9 ký tự
             $this->id,    // id (string)
             $this->userId, // user_id (string)
             $this->totalPrice, // total_price (double)
@@ -42,7 +43,8 @@ class Orders
             $this->customerName, // customer_name (string)
             $this->orderDate, // order_date (string)
             $this->orderTime,  // order_time (string)
-            $this->style_tiec // style_tiec (string)
+            $this->style_tiec, // style_tiec (string)
+            $this->phone_number
         );
 
         // Thực thi truy vấn
@@ -112,21 +114,18 @@ class Orders
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $this->conn->error);
         }
-
         $stmt->bind_param("s", $this->id);
         if (!$stmt->execute()) {
             throw new Exception("Execute failed: " . $stmt->error);
         }
-
         $stmt->close();
         return true;
     }
 
-    // Lấy tất cả đơn hàng với thông tin người dùng
     public function readAll()
     {
         $query = "SELECT o.id, o.user_id, u.username, u.email, o.total_price, o.num_people, 
-                         o.special_request, o.customer_name, o.order_date, o.order_time, o.status , o.style_tiec
+                         o.special_request, o.customer_name, o.order_date, o.order_time, o.status , o.style_tiec, o.phone_number
                   FROM " . $this->table_name . " o
                   JOIN user u ON o.user_id = u.id";
 
@@ -139,7 +138,7 @@ class Orders
     public function readById($id)
     {
         $query = "SELECT o.id, o.user_id, u.username, u.email, o.total_price, o.num_people, 
-                         o.special_request, o.customer_name, o.order_date, o.order_time,o.status
+                         o.special_request, o.customer_name, o.order_date, o.order_time,o.status,o.phone_number
                   FROM orders o
                   JOIN user u ON o.user_id = u.id
                   WHERE o.id = ?";
