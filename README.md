@@ -150,7 +150,16 @@ http://localhost/RestAPIRestaurant/products
 ## Detail
 ```
 http://localhost/RestAPIRestaurant/products/101
+
 ```
+## Status Products
+http://localhost/RestAPIRestaurant/products/101/status
+
+## Upload anh f-data -post
+http://localhost/RestAPIRestaurant/products/101/upload-image
+
+## create product f-data
+http://localhost/RestAPIRestaurant/products
 ## Tạo đánh giá mới 
 ```
 POST http://localhost/RestAPIRestaurant/reviews/create
@@ -250,51 +259,17 @@ Content-Type: application/json
   "password": "abc",
 }
 ```
-## menu
-http://localhost/RestAPIRestaurant/products
-
-## detail
-http://localhost/RestAPIRestaurant/products/101
-
-## Tạo đánh giá mới 
+## GET - get admin
 ```
-POST http://localhost/RestAPIRestaurant/reviews/create
-Headers:
-- Content-Type: application/json
-
-Body (raw JSON):
+GET http://localhost/restapirestaurant/admin
+Authurizarition Bearer Token {Token}
+```
+## POST - Login
+```
+POST http://localhost/restapirestaurant/admin/login
+Content-Type: application/json
 {
-    "customerName": "Nguyễn Văn A",
-    "rating": 5,
-    "title": "Món ăn rất ngon",
-    "content": "Món ăn rất ngon, phục vụ nhanh chóng!"
-}
-```
-## Lấy tất cả reviews:
-```
-GET http://localhost/RestAPIRestaurant/api/routes/review_routes.php
-```
-## Lấy một review:
-```
-GET http://localhost/RestAPIRestaurant/api/routes/review_routes.php?id=1
-```
-## Cập nhật review:
-```
-PUT http://localhost/RestAPIRestaurant/api/routes/review_routes.php
-Body (raw JSON):
-{
-    "id": 1,
-    "customerName": "John Doe",
-    "rating": 4,
-    "title": "Updated review",
-    "content": "Updated content..."
-}
-```
-## Xóa review:
-```
-DELETE http://localhost/RestAPIRestaurant/api/routes/review_routes.php
-Body (raw JSON):
-{
-    "id": 1
+    "email":"adminabc123@gmail.com",
+    "password":"Admin@123"
 }
 ```
