@@ -30,8 +30,11 @@ switch ($method) {
         break;
 
     case 'POST':
-        $data = json_decode(file_get_contents("php://input"), true);
-        $menu_controller->createMenuItem($data); // Tạo món ăn mới
+        if ($id && isset($uri_segments[3]) && $uri_segments[3] === 'upload-image') {
+            $menu_controller->uploadMenuItemImage($id); // Upload hình ảnh cho món ăn
+        } else {
+            $menu_controller->createMenuItem(); // Tạo món ăn mới
+        }
         break;
 
     case 'PUT':
