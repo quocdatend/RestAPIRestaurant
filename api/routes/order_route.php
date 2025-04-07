@@ -23,11 +23,19 @@ switch ($method) {
         // Tìm vị trí của "order" trong URL
         $index = array_search('order', $path);
     
-        // Nếu "order" tồn tại và có một phần tử tiếp theo, kiểm tra xem nó có phải là ID hợp lệ không
+        // Nếu URL là dạng: /order/user/{id}
+        if ($index !== false && isset($path[$index + 1]) && $path[$index + 1] === 'user' && isset($path[$index + 2])) {
+            $userId = intval($path[$index + 2]);
+    
+            // Gọi controller method getOrdersByUserId
+            $orderController->getOrdersByUserId($userId);
+            break;
+        }
+    
+        // Nếu URL là dạng: /order/{id} (ví dụ: I06LB5)
         if ($index !== false && isset($path[$index + 1])) {
             $id = $path[$index + 1];
     
-            // Kiểm tra nếu ID có đúng 6 ký tự chữ/số (ví dụ: 'I06LB5')
             if (preg_match('/^[A-Za-z0-9]{6}$/', $id)) {
                 $orderController->getOrderById($id);
                 break;
@@ -37,6 +45,7 @@ switch ($method) {
         // Nếu không có ID, lấy toàn bộ danh sách đơn hàng
         $orderController->getOrders();
         break;
+    
     
     
 
