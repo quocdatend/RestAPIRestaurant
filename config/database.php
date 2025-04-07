@@ -4,7 +4,6 @@ $config = [
     'db_user' => 'root',
     'db_pass' => '',
     'db_name' => 'restaurant',
-    // 'jwt_secret' => 'your_secure_jwt_secret_key'
 ];
 
 class Database {
