@@ -143,18 +143,12 @@ ALTER TABLE `reviews`
 
 -- --------------------------------------------------------
 
---
--- Cấu trúc bảng cho bảng `categories`
---
-
 CREATE TABLE `categories` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL COMMENT 'Tên danh mục'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `categories`
---
+
 
 INSERT INTO `categories` (`id`, `name`) VALUES
 (1, 'Món khai vị'),
@@ -162,11 +156,7 @@ INSERT INTO `categories` (`id`, `name`) VALUES
 (3, 'Món tráng miệng'),
 (4, 'Nước uống');
 
--- --------------------------------------------------------
 
---
--- Cấu trúc bảng cho bảng `menu_items`
---
 
 CREATE TABLE `menu_items` (
   `id` int(11) NOT NULL,
@@ -179,9 +169,7 @@ CREATE TABLE `menu_items` (
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Trạng thái món ăn: true (còn), false (hết)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `menu_items`
---
+
 
 INSERT INTO `menu_items` (`id`, `name`, `price`, `description`, `image`, `detail`, `category_id`, `status`) VALUES
 (101, 'Gỏi cuốn', 50000.00, 'Gỏi cuốn với tôm và rau củ', '/images/goi-cuon.jpg', 'Gỏi cuốn là món ăn truyền thống của Việt Nam, được làm từ bánh tráng cuốn với tôm tươi, thịt heo, rau sống và bún. Thường được chấm với nước mắm chua ngọt.', 1, 1),
@@ -200,52 +188,29 @@ INSERT INTO `menu_items` (`id`, `name`, `price`, `description`, `image`, `detail
 (119, 'Tôm Sốt Thái', 145000.00, 'Tôm sú tươi sốt Thái chua cay hấp dẫn', '/images/mc_tom.jpg', 'Tôm sú loại 1 nguyên con được chiên giòn, rưới sốt Thái tự làm từ ớt, tỏi, sả, chanh leo và nước cốt dừa. Vị chua cay hài hòa, thơm mùi sả và lá chanh. Ăn kèm bánh mì hoặc cơm trắng.', 2, 1),
 (120, 'Tiramisu', 55000.00, 'Bánh tiramisu lớp bánh quy cà phê thấm vị', '/images/tm_banh.jpg', 'Bánh tiramisu Ý với các lớp bánh quy Savoiardi thấm cà phê espresso, xen kẽ kem mascarpone phủ bột cacao nguyên chất. Vị đắng nhẹ của cà phê hài hòa với vị béo ngậy của kem. Bảo quản lạnh trước khi dùng.', 3, 1),
 (121, 'Salad Cá Ngừ', 75000.00, 'Salad tươi với cá ngừ đại dương và rau trộn', '/images/tm_salad.jpg', 'Salad gồm cá ngừ tươi, xà lách rocket, cà chua bi, dưa leo, hành tây đỏ và ô liu. Trộn cùng sốt mè rang và dầu olive nguyên chất. Món ăn giàu dinh dưỡng, phù hợp cho chế độ ăn lành mạnh.', 3, 1),
-(122, 'Coca Cola', 25000.00, 'Nước ngọt Coca Cola chính hãng', '/images/n_cocacola.jpg', 'Nước giải khát Coca Cola chính hãng, đóng chai 330ml. Có thể dùng lạnh hoặc kèm đá tùy theo yêu cầu của khách hàng.', 4, 1);
+(122, 'Coca Cola', 25000.00, 'Nước ngọt Coca Cola chính hãng', '/images/cocacola_1744006239.jpg', 'Nước giải khát Coca Cola chính hãng, đóng chai 330ml. Có thể dùng lạnh hoặc kèm đá tùy theo yêu cầu của khách hàng.', 4, 1);
 
---
--- Chỉ mục cho các bảng đã đổ
---
 
---
--- Chỉ mục cho bảng `categories`
---
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`);
 
---
--- Chỉ mục cho bảng `menu_items`
---
+
 ALTER TABLE `menu_items`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_menu_items_category` (`category_id`);
 
 
---
--- AUTO_INCREMENT cho các bảng đã đổ
---
-
---
--- AUTO_INCREMENT cho bảng `categories`
---
 ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
---
--- AUTO_INCREMENT cho bảng `menu_items`
---
+
 ALTER TABLE `menu_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
 
---
--- Các ràng buộc cho các bảng đã đổ
---
 
---
--- Các ràng buộc cho bảng `menu_items`
---
 ALTER TABLE `menu_items`
   ADD CONSTRAINT `fk_menu_items_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL;
-
+  
 -- --------------------------------------------------------
 
 CREATE TABLE payments (

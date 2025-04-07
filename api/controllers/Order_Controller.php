@@ -410,7 +410,7 @@ class OrderController
                     }
 
                     // Bind parameter với MySQLi
-                    $stmt->bind_param("i", $order['id']);
+                    $stmt->bind_param("i", $order['order_id']);
                     $stmt->execute();
 
                     // Lấy kết quả với MySQLi
