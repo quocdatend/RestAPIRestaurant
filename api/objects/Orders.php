@@ -138,7 +138,7 @@ class Orders
     public function readById($id)
     {
         $query = "SELECT o.id, o.user_id, u.username, u.email, o.total_price, o.num_people, 
-                         o.special_request, o.customer_name, o.order_date, o.order_time,o.status,o.phone_number
+                         o.special_request, o.customer_name, o.order_date, o.order_time,o.status,o.phone_number,o.style_tiec
                   FROM orders o
                   JOIN user u ON o.user_id = u.id
                   WHERE o.id = ?";
