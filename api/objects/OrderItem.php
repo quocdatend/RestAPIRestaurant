@@ -87,8 +87,6 @@ class OrderItem {
         $stmt->close();
         
         return $result;
-    }
-    
+    }   
 }
-
 ?>
