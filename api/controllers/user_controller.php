@@ -161,9 +161,9 @@ class UserController
         if (count($stmt) == 0) {
             return APIResponse::error("Email không tồn tại.");
         }
-        $to = isset($data["to"]) ? $data["to"] : null;
-        $sub = isset($data["sub"]) ? $data["sub"] : null;
-        $body = isset($data["body"]) ? $data["body"] : null;
+        $to =  $data["to"];
+        $sub = $data["sub"];
+        $body = $data["body"];
 
         $token = JWTHandler::generateTokenForResetPass();
         $newBody = $body . $token;
