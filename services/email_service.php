@@ -14,12 +14,12 @@ class EmailService {
         try {
             // Cấu hình SMTP
             $this->mail->isSMTP();
-            $this->mail->Host = 'smtp.gmail.com';
+            $this->mail->Host = getenv("HOST_MAIL");
             $this->mail->SMTPAuth = true;
-            $this->mail->Username = 'hnqdat2003@gmail.com'; // Email gửi
-            $this->mail->Password = 'kxpo paay zyhr zdxw';    // App Password
+            $this->mail->Username = getenv("USERNAME_MAIL"); // Email gửi
+            $this->mail->Password = getenv("PASSWORD_MAIL");    // App Password
             $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $this->mail->Port = 587;
+            $this->mail->Port = getenv("PORT_MAIL");
 
             $this->mail->setFrom('hnqdat2003@gmail.com', 'Restaurant');
             $this->mail->isHTML(true);
