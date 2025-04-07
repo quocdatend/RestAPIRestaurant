@@ -169,5 +169,30 @@ class Orders
 
         return true;
     }
+    public function readAllOrdersByUserId($userId) {
+        $query = "SELECT oi.*, o.user_id, o.order_date, o.order_time ,o.status, o.style_tiec, o.phone_number
+                  FROM order_items oi
+                  JOIN orders o ON oi.order_id = o.id
+                  WHERE o.user_id = ?
+                  ORDER BY o.order_date DESC, o.order_time DESC";
+    
+        $stmt = $this->conn->prepare($query);
+    
+        if ($stmt === false) {
+            throw new Exception("Prepare failed: " . $this->conn->error);
+        }
+    
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        $items = [];
+        while ($row = $result->fetch_assoc()) {
+            $items[] = $row;
+        }
+    
+        $stmt->close();
+        return $items;
+    }
     
 }
