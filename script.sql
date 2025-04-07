@@ -245,3 +245,21 @@ ALTER TABLE `menu_items`
 --
 ALTER TABLE `menu_items`
   ADD CONSTRAINT `fk_menu_items_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL;
+
+-- --------------------------------------------------------
+
+CREATE TABLE payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(17) NOT NULL,
+    order_id VARCHAR(6) NOT NULL,
+    transaction_id VARCHAR(255) NOT NULL,
+    payment_amount DECIMAL(10, 2) NOT NULL,
+    currency VARCHAR(3) NOT NULL,
+    payment_status VARCHAR(20) NOT NULL,
+    payment_method VARCHAR(20) NOT NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
+    INDEX (user_id),
+    INDEX (order_id),
+    INDEX (transaction_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
