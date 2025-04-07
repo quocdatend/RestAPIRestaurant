@@ -36,7 +36,7 @@ class Review {
         $this->content = $this->conn->real_escape_string($this->content);
 
         // Bind values
-        $stmt->bind_param("siis", $this->customerName, $this->rating, $this->title, $this->content);
+        $stmt->bind_param("siss", $this->customerName, $this->rating, $this->title, $this->content);
 
         if($stmt->execute()) {
             $this->id = $this->conn->insert_id;
