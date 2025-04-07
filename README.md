@@ -150,7 +150,16 @@ http://localhost/RestAPIRestaurant/products
 ## Detail
 ```
 http://localhost/RestAPIRestaurant/products/101
+
 ```
+## Status Products
+http://localhost/RestAPIRestaurant/products/101/status
+
+## Upload anh f-data -post
+http://localhost/RestAPIRestaurant/products/101/upload-image
+
+## create product f-data
+http://localhost/RestAPIRestaurant/products
 ## Tạo đánh giá mới 
 ```
 POST http://localhost/RestAPIRestaurant/reviews/create
