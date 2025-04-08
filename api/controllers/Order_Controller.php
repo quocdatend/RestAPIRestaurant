@@ -40,7 +40,7 @@ class OrderController
                     }
 
                     // Bind parameter với MySQLi
-                    $stmt->bind_param("i", $order['id']);
+                    $stmt->bind_param("s", $order['id']);
                     $stmt->execute();
 
                     // Lấy kết quả với MySQLi
@@ -410,7 +410,7 @@ class OrderController
                     }
 
                     // Bind parameter với MySQLi
-                    $stmt->bind_param("i", $order['order_id']);
+                    $stmt->bind_param("s", $order['order_id']);
                     $stmt->execute();
 
                     // Lấy kết quả với MySQLi
