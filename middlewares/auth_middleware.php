@@ -60,7 +60,7 @@ class AuthMiddleware
         }
 
         // Nếu không có role hoặc role không phải "user" hoặc "admin", từ chối truy cập
-        if (!isset($decoded->role) || !in_array($decoded->role, ['user', 'admin'])) {
+        if (!isset($decoded->role) || !in_array($decoded->role, ['ADMIN', 'USER'])) {
             APIResponse::json(403, "Forbidden", ["error" => "Access denied"]);
         }
 

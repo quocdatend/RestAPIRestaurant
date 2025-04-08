@@ -24,8 +24,10 @@ switch ($resource) {
     case 'admin':
         require_once '../api/routes/admin_routes.php';
         break;
+    case 'payments':
+        require_once '../api/routes/paypal_routes.php';
+        break;
     default:
         echo json_encode(["message" => "Invalid request method"]);
         break;
 }
-?>
