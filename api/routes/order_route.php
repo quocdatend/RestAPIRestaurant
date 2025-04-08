@@ -17,38 +17,55 @@ $id = isset($uri_segments[2]) ? intval($uri_segments[2]) : null;
 
 switch ($method) {
     case 'GET':
-        // Lấy URI và loại bỏ dấu "/" ở đầu và cuối
+        // Lấy đường dẫn URI
         $path = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
     
-        // Tìm vị trí của "order" trong URL
+        // Tìm vị trí 'order'
         $index = array_search('order', $path);
     
-        // Nếu URL là dạng: /order/user/{id}
+        // Kiểm tra có /order/user/{userId}
         if ($index !== false && isset($path[$index + 1]) && $path[$index + 1] === 'user' && isset($path[$index + 2])) {
-            $userId = intval($path[$index + 2]);
+            $userId = $path[$index + 2]; // KHÔNG ép kiểu intval, giữ nguyên chuỗi nếu user_id là VARCHAR
     
-            // Gọi controller method getOrdersByUserId
-            $orderController->getOrdersByUserId($userId);
-            break;
+            // Gọi controller
+            $orders = $orderController->getOrdersByUserId($userId);
+    
+            if (is_array($orders) && count($orders) > 0) {
+                http_response_code(200);
+                echo json_encode(['data' => $orders]);
+            } else {
+                http_response_code(200);
+                echo json_encode(['data' => null]);
+            }
+            return; 
         }
     
-        // Nếu URL là dạng: /order/{id} (ví dụ: I06LB5)
+        // Nếu URL là: /order/{id} (ví dụ I06LB5)
         if ($index !== false && isset($path[$index + 1])) {
             $id = $path[$index + 1];
     
             if (preg_match('/^[A-Za-z0-9]{6}$/', $id)) {
-                $orderController->getOrderById($id);
-                break;
+                $order = $orderController->getOrderById($id);
+                if ($order) {
+                    http_response_code(200);
+                    echo json_encode(['data' => $order]);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Order not found']);
+                }
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid order ID format']);
             }
+            return;
         }
     
-        // Nếu không có ID, lấy toàn bộ danh sách đơn hàng
-        $orderController->getOrders();
-        break;
+        // Nếu không phải 2 dạng trên, trả về tất cả đơn hàng
+        $orders = $orderController->getOrders();
+        http_response_code(200);
+        echo json_encode(['data' => $orders]);
+        return;
     
-    
-    
-
     case 'POST':
         $data = json_decode(file_get_contents("php://input"), true);
         $requestUri = $_SERVER['REQUEST_URI']; // Định nghĩa $requestUri trước khi sử dụng
