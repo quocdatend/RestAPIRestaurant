@@ -29,7 +29,7 @@ class OrderController
                     }
 
                     // Chuẩn bị query cho order items với MySQLi
-                    $query = "SELECT oi.id, oi.order_id, oi.menu_item_id, oi.status 
+                    $query = "SELECT oi.id, oi.order_id, oi.menu_item_id, oi.status ,oi.quantity
                              FROM order_items oi 
                              WHERE oi.order_id = ?";
 
@@ -356,7 +356,7 @@ class OrderController
             }
 
             // Lấy danh sách các item trong order
-            $query = "SELECT oi.id, oi.order_id, oi.menu_item_id, oi.status 
+            $query = "SELECT oi.id, oi.order_id, oi.menu_item_id, oi.status , oi.quantity
                       FROM order_items oi 
                       WHERE oi.order_id = ?";
 
@@ -399,7 +399,7 @@ class OrderController
                     }
 
                     // Chuẩn bị query cho order items với MySQLi
-                    $query = "SELECT oi.id, oi.order_id, oi.menu_item_id, oi.status 
+                    $query = "SELECT oi.id, oi.order_id, oi.menu_item_id, oi.status ,oi.quantity
                              FROM order_items oi 
                              WHERE oi.order_id = ?";
 
