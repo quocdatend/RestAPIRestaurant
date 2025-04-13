@@ -109,11 +109,13 @@ class PaymentController {
                 $this->payment->payment_status = 'COMPLETED';
                 $this->payment->updateStatus();
                 
-                return json_encode([
-                    'status' => 'success',
-                    'message' => 'Thanh toán đã được xử lý thành công',
-                    'details' => $result
-                ]);
+                header("Content-Type: application/html; charset=UTF-8");
+                include __DIR__ . '/../../public/payments/payment_success.php';
+                // return json_encode([
+                //     'status' => 'success',
+                //     'message' => 'Thanh toán đã được xử lý thành công',
+                //     'details' => $result
+                // ]);
             } else {
                 return json_encode([
                     'status' => 'error',

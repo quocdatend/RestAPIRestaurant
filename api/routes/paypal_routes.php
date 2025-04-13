@@ -90,10 +90,12 @@ switch ($request_method) {
                 
             case 'cancel':
                 // Xử lý khi người dùng hủy thanh toán trên PayPal
-                echo json_encode([
-                    'status' => 'info',
-                    'message' => 'Thanh toán đã bị hủy bởi người dùng'
-                ]);
+                header("Content-Type: application/html; charset=UTF-8");
+                include __DIR__ . '/../../public/payments/payment_cancel.php';
+                // echo json_encode([
+                //     'status' => 'info',
+                //     'message' => 'Thanh toán đã bị hủy bởi người dùng'
+                // ]);
                 break;
                 
             case 'history':
