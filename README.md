@@ -1,3 +1,8 @@
+# Link Front-End
+```
+https://github.com/trongnhancoder/Event_Restaurant_ReactJs
+```
+# Quy trình sự kiện
 Request 
 → index.php 
 → Router 
@@ -245,9 +250,6 @@ POST http://localhost/restapirestaurant/users/forgetPassword
 Content-Type: application/json
 {
   "email": "abc@gmail.com"
-  "to" : "abc@gmail.com",
-  "subject" : "abc",
-  "body" : "abc",
 }
 ```
 ## POST - reset password
@@ -256,6 +258,7 @@ POST http://localhost/restapirestaurant/users/resetPassword
 Authurizarition Bearer Token {Token}
 Content-Type: application/json
 {
+  "email":"abc@gmail.com",
   "password": "abc",
 }
 ```
@@ -271,5 +274,14 @@ Content-Type: application/json
 {
     "email":"adminabc123@gmail.com",
     "password":"Admin@123"
+}
+```
+## POST - send email
+POST http://localhost/restapirestaurant/users/sendEmail
+Authurizarition Bearer Token {Token}
+Content-Type: application/json
+{
+  "email":"abc@gmail.com",
+  "body":"abc"
 }
 ```
