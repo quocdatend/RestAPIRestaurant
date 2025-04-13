@@ -168,7 +168,7 @@ class User
 
         $stmt = $this->conn->prepare($query);
 
-        $email = isset($data['email']) ? $data['email'] : '';
+        $email = isset($data) ? $data : '';
         $this->email = htmlspecialchars(strip_tags($email));
 
         $stmt->bind_param("s", $this->email);

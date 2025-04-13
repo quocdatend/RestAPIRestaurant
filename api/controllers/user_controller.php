@@ -94,7 +94,6 @@ class UserController
             http_response_code(503);
             echo json_encode("Không thể tạo tài khoản.");
         }
-        
     }
 
     public function login($data)
@@ -145,6 +144,13 @@ class UserController
         return APIResponse::success($stmt);
     }
 
+    public function showFormForgotPassword()
+    {
+
+        header('Content-Type: text/html');
+        include __DIR__ . '/../../public/ResetPassword/reset_password.php';
+    }
+
     public function forgetPassword($data)
     {
         $requiredFields = ['email'];
@@ -152,41 +158,45 @@ class UserController
         if (!ValidateMiddleware::handle($data, $requiredFields)) {
             return;
         }
-        $requiredFields = ['to', 'sub', 'body'];
 
-        if (!ValidateMiddleware::handle($data, $requiredFields)) {
-            return;
-        }
-        $stmt = $this->user->searchByEmail($data);
+        $stmt = $this->user->searchByEmail($data['email']);
         if (count($stmt) == 0) {
             return APIResponse::error("Email không tồn tại.");
         }
-        $to =  $data["to"];
-        $sub = $data["sub"];
-        $body = $data["body"];
 
-        $token = JWTHandler::generateTokenForResetPass();
-        $newBody = $body . $token;
+        $user = $stmt[0];
+        $token = JWTHandler::generateToken($user["id"], $user["email"], $user["username"]);
+        $link = "http://localhost/restapirestaurant/forgotpassword?email=" . urlencode($user["email"]) . "&token=" . urlencode($token);
+
+        $subject = "Thay Đổi Mật Khẩu";
+        $body = "
+        <p>Chúng tôi đã nhận được yêu cầu thay đổi mật khẩu của bạn.</p>
+        <p>Vui lòng nhấn vào liên kết dưới đây để đặt lại mật khẩu:</p>
+        <p><a href='$link'>$link</a></p>
+        <p>Liên kết này chỉ có hiệu lực trong 15 phút.</p>
+    ";
+
         $emailService = new EmailService();
-        $emailService->sendEmail($to, $sub, $newBody);
+        if (!$emailService->sendEmail($user["email"], $subject, $body)) {
+            return APIResponse::error("Không thể gửi email.");
+        }
+
         return APIResponse::success("Đã gửi email reset Password");
     }
 
+
     public function resetPassword($data)
     {
-        $requiredFields = ['username', 'password', 'repassword'];
+        $requiredFields = ['email', 'password'];
 
         if (!ValidateMiddleware::handle($data, $requiredFields)) {
-            return ;
+            return;
         }
         $userData = AuthMiddleware::verifyToken();
         if (count((array) $userData) == 0) {
             return APIResponse::error("Token không hợp lệ.");
         }
         $data["username"] = $userData["username"];
-        if ($data["password"] != $data["repassword"]) {
-            return APIResponse::error("Mật khẩu không khớp.");
-        }
         $stmt = $this->user->updatePassword($data);
         if (!$stmt) {
             return APIResponse::error("Không thể cập nhật thông tin người dùng.");
