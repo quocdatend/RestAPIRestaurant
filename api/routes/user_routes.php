@@ -16,6 +16,8 @@ switch ($method) {
         if (isset($uri_segments[2]) && $uri_segments[2] == 'response') {
             AuthMiddleware::checkUser();
             $user_controller->getUser(); 
+        } else if(isset($uri_segments[2]) && $uri_segments[2] == 'forgotPassword') {
+            $user_controller->showFormForgotPassword();
         } else if(isset($uri_segments[3])) {
             echo json_encode(["message" => "Invalid request method"]);
         } else {
@@ -35,8 +37,12 @@ switch ($method) {
             $data = json_decode(file_get_contents("php://input"), true);
             $user_controller->forgetPassword($data);
         }else if (isset($uri_segments[2]) && $uri_segments[2] == 'resetPassword') {
+            // AuthMiddleware::checkUser();
             $data = json_decode(file_get_contents("php://input"), true);
             $user_controller->resetPassword($data);
+        } else if(isset($uri_segments[2]) && $uri_segments[2] == 'sendEmail') {
+            AuthMiddleware::checkUser();
+            //
         } else  {
             $data = json_decode(file_get_contents("php://input"), true);
             $user_controller->createUser($data); // Tạo user mới

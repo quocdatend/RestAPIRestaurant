@@ -75,29 +75,31 @@ INSERT INTO `order_items` (`id`, `order_id`, `menu_item_id`, `status`) VALUES
 
 -- --------------------------------------------------------
 
-
 --
 -- Cấu trúc bảng cho bảng `user`
 --
 
-
-CREATE TABLE `user` (
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE IF NOT EXISTS `user` (
   `id` varchar(17) NOT NULL,
   `username` varchar(45) NOT NULL,
   `password` varchar(64) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `role` varchar(6) NOT NULL DEFAULT 'USER',
   PRIMARY KEY (`id`)
-);
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `user`
 --
 
-INSERT INTO `user` (`id`, `username`, `password`, `email`) VALUES
-('Wp46dCAo32SNZytl', 'Quocdat@123', '6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090', 'abc1234@gmail.com'),
-('3mcK8AG02ofkRXOq', 'Quocdat@1324', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'abcc1234@gmail.com'),
-('Z8XavUlcgwmbJWG6', 'Quocdat123@', '6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090', 'hngdat2003@gmail.com'),
-('CJWyqPFOfiUbdMBR', 'testpass', 'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7', 'hnqdat2003@gmail.com');
+INSERT INTO `user` (`id`, `username`, `password`, `email`, `role`) VALUES
+('Wp46dCAo32SNZytl', 'Quocdat@123', '6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090', 'abc1234@gmail.com', 'USER'),
+('3mcK8AG02ofkRXOq', 'Quocdat@1324', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'abcc1234@gmail.com', 'USER'),
+('Z8XavUlcgwmbJWG6', 'Quocdat123@', '6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090', 'hngdat2003@gmail.com', 'USER'),
+('CJWyqPFOfiUbdMBR', 'testpass', 'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7', 'hnqdat2003@gmail.com', 'USER'),
+('dki1bmnxepD7PRch', 'quocdat123', '92a881c87724560467dab0ba7ccbb5f7eeb38626f0f750a1b89b5b8abd106d10', 'hngdaat2003@gmail.com', 'USER'),
+('wKdEGVk8PxDpHz64', 'Quocdat@123123', '92a881c87724560467dab0ba7ccbb5f7eeb38626f0f750a1b89b5b8abd106d10', 'hngaadat2003@gmail.com', 'USER');
 
 
 -- --------------------------------------------------------

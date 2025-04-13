@@ -1,24 +1,18 @@
 <?php
-
-// Load core files
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/core.php';
 require_once __DIR__ . '/../controllers/payment_controller.php';
 require_once __DIR__ . '/../../middlewares/auth_middleware.php';
 
-// Kết nối database
 $database = new Database();
 $db = $database->getConnection();
 $paymentController = new PaymentController($db);
 
-// Phân tích URL
 $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $request_method = $_SERVER['REQUEST_METHOD'];
 
-// Tách các thành phần URI
 $uri_parts = explode('/', trim($request_uri, '/'));
 
-// Ví dụ: /RestAPIRestaurant/payments/initiate → ['RestAPIRestaurant', 'payments', 'initiate']
 $endpoint = $uri_parts[count($uri_parts) - 2] ?? '';
 $action = $uri_parts[count($uri_parts) - 1] ?? '';
 
@@ -38,14 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 AuthMiddleware::checkUser();
 
-// Xử lý logic theo method và action
 switch ($request_method) {
     case 'POST':
         $data = json_decode(file_get_contents("php://input"));
 
         switch($action) {
             case 'initiate':
-                // Bắt đầu quá trình thanh toán
                 echo $paymentController->initiatePayment($data);
                 break;
                 
@@ -98,10 +90,12 @@ switch ($request_method) {
                 
             case 'cancel':
                 // Xử lý khi người dùng hủy thanh toán trên PayPal
-                echo json_encode([
-                    'status' => 'info',
-                    'message' => 'Thanh toán đã bị hủy bởi người dùng'
-                ]);
+                header("Content-Type: application/html; charset=UTF-8");
+                include __DIR__ . '/../../public/payments/payment_cancel.php';
+                // echo json_encode([
+                //     'status' => 'info',
+                //     'message' => 'Thanh toán đã bị hủy bởi người dùng'
+                // ]);
                 break;
                 
             case 'history':

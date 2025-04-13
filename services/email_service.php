@@ -18,11 +18,12 @@ class EmailService {
             $this->mail->SMTPAuth = true;
             $this->mail->Username = getenv("USERNAME_MAIL"); // Email gửi
             $this->mail->Password = getenv("PASSWORD_MAIL");    // App Password
-            $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $this->mail->Port = getenv("PORT_MAIL");
+            $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
 
-            $this->mail->setFrom('hnqdat2003@gmail.com', 'Restaurant');
+            $this->mail->setFrom('noreply@restaurant.test', 'Restaurant');
             $this->mail->isHTML(true);
+            $this->mail->CharSet = 'UTF-8';
         } catch (Exception $e) {
             error_log("Email Error: " . $e->getMessage());
         }
@@ -30,6 +31,7 @@ class EmailService {
 
     public function sendEmail($to, $subject, $body) {
         try {
+            $this->mail->clearAddresses();
             $this->mail->addAddress($to);
             $this->mail->Subject = $subject;
             $this->mail->Body = $body;
