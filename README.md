@@ -84,27 +84,30 @@ GET http://localhost/restapirestaurant/order
 ```
 POST http://localhost/restapirestaurant/order
 {
-  "user_id": 7,
-  "username": "quocdat",
-  "email": "abc@gmail.com",
-  "total_price": "89.99",
-  "num_people": 4,
-  "special_request": "No onions",
-  "customer_name": "Jane Smith",
-  "order_date": "2025-03-25",
-  "order_time": "18:45:00",
-  "status": 1,
-  "order_items": [
-    {
-      "menu_item_id": 101,
-      "status": "pending"
-    },
-    {
-      "menu_item_id": 102,
-      "status": "confirmed"
+        "user_id": "Wp46dCAo32SNZytl",
+        "total_price": "89.99",
+        "num_people": 4,
+        "special_request": "No onions",
+        "customer_name": "Jane Smith",
+        "order_date": "2025-03-25",
+        "order_time": "18:45:00",
+        "status": 0,
+        "style_tiec": "sfs",
+        "phone_number": "0923456789",
+        "order_items": [
+            {
+                "menu_item_id": 101,
+                "status": "pending",
+                "quantity": 1
+            },
+            {
+                "menu_item_id": 101,
+                "status": "pending",
+                "quantity": 1
+            }
+
+        ]
     }
-  ]
-}
 ```
 ## POST - Thêm sản phẩm vào đơn hàng
 ```
