@@ -119,7 +119,10 @@ class OrderController
                     }
                     $this->orderItem->orderId = $orderId;
                     $this->orderItem->menuItemId = (int) $item['menu_item_id'];
+                
                     $this->orderItem->status = $item['status'] ?? 'pending';
+                    $this->orderItem->quantity = isset($item['quantity']) ? (int) $item['quantity'] : 1; // Mặc định là 1 nếu không có
+
                     if (!$this->orderItem->create()) {
                         throw new Exception("Không thể tạo order item cho menu_item_id: " . $item['menu_item_id']);
                     }
@@ -185,38 +188,42 @@ class OrderController
             }
 
             // Nếu có order_items, xử lý cập nhật hoặc thêm mới
-            if (!empty($data['order_items']) && is_array($data['order_items'])) {
-                foreach ($data['order_items'] as $item) {
-                    if (empty($item['menu_item_id'])) {
-                        throw new Exception("Dữ liệu order_items không hợp lệ: menu_item_id là bắt buộc.");
-                    }
+if (!empty($data['order_items']) && is_array($data['order_items'])) {
+    foreach ($data['order_items'] as $item) {
+        if (empty($item['menu_item_id'])) {
+            throw new Exception("Dữ liệu order_items không hợp lệ: menu_item_id là bắt buộc.");
+        }
 
-                    $orderItemId = $item['id'] ?? null;
-                    $menuItemId = (int) $item['menu_item_id'];
-                    $status = $item['status'] ?? 'pending';
+        $orderItemId = $item['id'] ?? null;
+        $menuItemId = (int) $item['menu_item_id'];
+        $status = $item['status'] ?? 'pending';
+        $quantity = isset($item['quantity']) ? (int) $item['quantity'] : 1; // Mặc định là 1
 
-                    if ($orderItemId) {
-                        // Cập nhật item đã có ID
-                        $this->orderItem->id = (int) $orderItemId;
-                        $this->orderItem->orderId = $orderId;
-                        $this->orderItem->menuItemId = $menuItemId;
-                        $this->orderItem->status = $status;
+        if ($orderItemId) {
+            // Cập nhật item đã có ID
+            $this->orderItem->id = (int) $orderItemId;
+            $this->orderItem->orderId = $orderId;
+            $this->orderItem->menuItemId = $menuItemId;
+            $this->orderItem->status = $status;
+            $this->orderItem->quantity = $quantity;
 
-                        if (!$this->orderItem->update()) {
-                            throw new Exception("Không thể cập nhật order item ID: " . $orderItemId);
-                        }
-                    } else {
-                        // Thêm mới item nếu chưa có ID
-                        $this->orderItem->orderId = $orderId;
-                        $this->orderItem->menuItemId = $menuItemId;
-                        $this->orderItem->status = $status;
-
-                        if (!$this->orderItem->create()) {
-                            throw new Exception("Không thể tạo order item cho menu_item_id: " . $menuItemId);
-                        }
-                    }
-                }
+            if (!$this->orderItem->update()) {
+                throw new Exception("Không thể cập nhật order item ID: " . $orderItemId);
             }
+        } else {
+            // Thêm mới item nếu chưa có ID
+            $this->orderItem->orderId = $orderId;
+            $this->orderItem->menuItemId = $menuItemId;
+            $this->orderItem->status = $status;
+            $this->orderItem->quantity = $quantity;
+
+            if (!$this->orderItem->create()) {
+                throw new Exception("Không thể tạo order item cho menu_item_id: " . $menuItemId);
+            }
+        }
+    }
+}
+
 
             // Commit transaction nếu không có lỗi
             $this->db->commit();
