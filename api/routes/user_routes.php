@@ -37,7 +37,7 @@ switch ($method) {
             $data = json_decode(file_get_contents("php://input"), true);
             $user_controller->forgetPassword($data);
         }else if (isset($uri_segments[2]) && $uri_segments[2] == 'resetPassword') {
-            // AuthMiddleware::checkUser();
+            AuthMiddleware::checkUser();
             $data = json_decode(file_get_contents("php://input"), true);
             $user_controller->resetPassword($data);
         } else if(isset($uri_segments[2]) && $uri_segments[2] == 'sendEmail') {

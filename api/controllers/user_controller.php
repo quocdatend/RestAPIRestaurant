@@ -166,7 +166,7 @@ class UserController
 
         $user = $stmt[0];
         $token = JWTHandler::generateToken($user["id"], $user["email"], $user["username"]);
-        $link = "http://localhost/restapirestaurant/forgotpassword?email=" . urlencode($user["email"]) . "&token=" . urlencode($token);
+        $link = "http://localhost/restapirestaurant/users/forgotPassword?email=" . urlencode($user["email"]) . "&token=" . urlencode($token);
 
         $subject = "Thay Đổi Mật Khẩu";
         $body = "
@@ -199,7 +199,9 @@ class UserController
         $data["username"] = $userData["username"];
         $stmt = $this->user->updatePassword($data);
         if (!$stmt) {
-            return APIResponse::error("Không thể cập nhật thông tin người dùng.");
+            return APIResponse::error( $data);
         }
+        // reuturn json ok true
+        return APIResponse::success("Cập nhật mật khẩu thành công.");
     }
 }

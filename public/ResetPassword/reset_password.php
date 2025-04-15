@@ -155,7 +155,7 @@
         formData.append("password", passwordValue);
         formData.append("email", email);
         //formData.append("confirmPassword", confirmPasswordValue);
-        //formData.append("token", token); // Thêm token vào formData
+        formData.append("token", token); // Thêm token vào formData
 
         try {
           // Gửi yêu cầu POST đến API
@@ -165,11 +165,14 @@
               "Content-Type": "application/json",
               "Authorization": "Bearer " + token
             },
-            body: formData
+            body: JSON.stringify({
+              email: formData.get("email"),
+              password: formData.get("password")
+            })
           });
-
+          console.log(response);
           // Kiểm tra phản hồi từ API
-          if (response.ok) {
+          if (response.status == "success") {
             const data = await response.json();
             console.log(data);
             Toastify({
