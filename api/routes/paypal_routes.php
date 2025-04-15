@@ -30,10 +30,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     header("HTTP/1.1 200 OK");
     exit;
 }
-AuthMiddleware::checkUser();
+
 
 switch ($request_method) {
     case 'POST':
+        AuthMiddleware::checkUser();
         $data = json_decode(file_get_contents("php://input"));
 
         switch($action) {
@@ -90,7 +91,7 @@ switch ($request_method) {
                 
             case 'cancel':
                 // Xử lý khi người dùng hủy thanh toán trên PayPal
-                header("Content-Type: application/html; charset=UTF-8");
+                header("Content-Type: text/html; charset=UTF-8");
                 include __DIR__ . '/../../public/payments/payment_cancel.php';
                 // echo json_encode([
                 //     'status' => 'info',
