@@ -109,7 +109,7 @@ class PaymentController {
                 $this->payment->payment_status = 'COMPLETED';
                 $this->payment->updateStatus();
                 
-                header("Content-Type: application/html; charset=UTF-8");
+                header("Content-Type: text/html; charset=UTF-8");
                 include __DIR__ . '/../../public/payments/payment_success.php';
                 // return json_encode([
                 //     'status' => 'success',
