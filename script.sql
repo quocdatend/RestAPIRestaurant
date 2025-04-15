@@ -228,3 +228,6 @@ CREATE TABLE payments (
     INDEX (order_id),
     INDEX (transaction_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+ALTER TABLE order_items ADD quantity INT DEFAULT 1;
