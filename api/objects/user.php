@@ -65,7 +65,7 @@ class User
         } else {
             return false;
         }
-    }
+    } 
 
     public function updatePassword($data)
     {
@@ -81,9 +81,9 @@ class User
         $hashedPassword = HashPassword($password);
 
         $stmt->bind_param("ss", $hashedPassword, $username);
-
+        
         if ($stmt->execute()) {
-            return $stmt->affected_rows > 0;
+            return true;
         } else {
             return false;
         }
