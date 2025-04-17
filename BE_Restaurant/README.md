@@ -52,17 +52,6 @@ project-restapi/
 ├── composer.json              # Quản lý dependencies
 └── README.md                  # Hướng dẫn sử dụng
 ```
-# Hướng dẫn cài đặt 
-- Tải composer từ link --https://getcomposer.org/download/
-- Kiểm tra phiên bản
-```
-composer --version
-```
-- Cập nhật lại composer
-```
-composer install
-```
-
 # huong dan restapi
 ## GET - Lấy thông tin đơn hàng theo ID
 ```
